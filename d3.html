@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<style>
+  #map-holder {
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
+<div id="map-holder"></div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script>
+var svg = d3.select("svg");
+var projection = d3.geoConicConformal()
+  .parallels([41 + 43 / 60, 42 + 41 / 60])
+  .rotate([71 + 30 / 60, -41]);
+  path = d3.geoPath(projection);
+
+  var svg = d3
+    .select("#map-holder")
+    .append("svg")
+    // set to the same size as the "map-holder" div
+    .attr("width", $("#map-holder").width())
+    .attr("height", $("#map-holder").height());
+
+countriesGroup = svg
+    .append("g")
+    .attr("id", "map");
+// add a background rectangle
+countriesGroup
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", w)
+    .attr("height", h);
+
+d3.json("test.json", function(error, test) {
+  if (error) throw error;
+
+  var states = topojson.feature(test, mx.objects.states),
+      municipalities = topojson.feature(test, mx.objects.municipalities);
+
+  projection.fitSize([960, 600], states);
+
+  d3.select("#municipalities")
+      .datum(municipalities)
+      .attr("d", path);
+
+  d3.select("#states")
+      .datum(states)
+      .attr("d", path);
+});
+</script>
