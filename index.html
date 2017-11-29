@@ -1,9 +1,9 @@
 <head>
   <meta charset="utf-8">
-  <title>Html5 local file api tut</title>
+  <title>Kevin Lynch Image Labeling</title>
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <script src="jquery-csv.js"></script>
-  <script src="papaparse.min.js"></script>
+  <script src="js/jquery-csv.js"></script>
+  <script src="js/papaparse.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.3.3/css/foundation.min.css" rel="stylesheet" />
 </head>
 
@@ -12,19 +12,23 @@
     <!-- the photo demo-->
 		<div class="large-12 columns"  >
 
-				<h1>Load A Photo</h1>
-				<input type="file" id="the-photo-file-field">
+				<h3>Kevin Lynch Image Labeling</h3>
+				<input type="button" id="prev" value="Previous Image" onclick="prevImage()">
+				<input type="button" id="next" value="Next Image" onclick="nextImage()">
+        <br><br>
 				<div id="preview" >
           <!--image will be inserted here-->
 				</div>
 				<div id="data" class="large-8 columns">
-					<h2 id="name"></h2>
-					<p id="size"></p>
-					<p id="type"></p>
+          <br>
+					<p id="text"></p>
+					<p id="id"></p>
+					<!-- <p id="size"></p> -->
+					<!-- <p id="type"></p> -->
 				</div>
 		</div>
 	</div>
 
 </div>
 
-<script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
