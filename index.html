@@ -1,6 +1,6 @@
 <head>
   <meta charset="utf-8">
-  <title>Kevin Lynch Image Labeling</title>
+  <title>Lynch-Kepes Image Labeling</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -13,70 +13,85 @@
         margin: 0;
         padding: 0;
       }
+      #data {
+        font-size: 12px;
+      }
       #street-view {
-        height: 300px;
+        height: 200px;
         width: 100%;
       }
       #map {
-        height: 300px;
+        height: 200px;
         width: 100%;
       }
       .image {
-        height: 300px;
-        width: 300px;
+        height: 200px;
+        width: 200px;
+      }
+      #query_field{
+        display:inline-block;
+        height: 100px;
+        width: 100%;
+        wrap: 'soft';
       }
     </style>
 </head>
 
 <div class="container">
 
-  <div class="row" style="margin:20px 0px">
+  <div class="row" style="margin:10px 0px">
     <div class="col-md">
-    <h2>Kevin Lynch Image Labeling</h3>
+    <h5>Lynch-Kepes Image Labeling</h5>
     </div>
   </div>
 
-  <div class="row" style="margin:20px 0px">
-    <div class="col-md-4">
-      <input type="button" id="prev" value="Previous Image" onclick="prevImage()">
-      <input type="button" id="next" value="Next Image" onclick="nextImage()">
+  <div class="row" id="controls" style="margin:10px 0px">
+    <form class="form-inline">
+      <input type="button" class="btn btn-secondary btn-sm ml-sm-3 mr-sm-2" id="prev" value="<" onclick="prevImage()">
+      <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value=">" onclick="nextImage()">
+      <input type="field" class="form-control form-control-sm mr-sm-2"  id="id_field">
+      <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value="Find ID" onclick="findImage()">
+      <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="save" value="Save" onclick="save()">
+      <input type="button" class="btn btn-primary btn-sm mr-sm-2" id="export" value="Export" onclick="exportCSV()">
+    </form>
     </div>
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-      <input type="field" id="id_field">
-      <input type="button" id="next" value="Find Image" onclick="findImage()">
-    </div>
-  </div>
 
-  <div class="row" style="margin:20px 0px">
+  <div class="row" style="margin:10px 0px">
       <div class="col-md-3">
-			     <div id="preview" style="height:300px; width:100%"></div>
+			     <div id="preview" ></div>
 			</div>
       <div class="col-md-8 offset-md-1">
       <div id="street-view"></div>
       </div>
     </div>
 
-    <div class="row" style="margin:20px 0px">
+    <div class="row" style="margin:10px 0px">
 			<div id="data" class="col-md">
       <div id="map"></div>
     </div>
   </div>
 
-    <div class="row" style="margin:20px 0px">
-			<div id="data" class="col-md">
-        <br>
+    <div class="row" id="data" style="margin:20px 0px">
+			<div class="col-md">
+        <b>SV lat lng </b><span id="sv_latLng"></span><br>
+        <b>SV pitch </b><span id="sv_pitch"></span><br>
+        <b>SV heading </b><span id="sv_heading"></span>
+      </div>
+  			<div class="col-md">
         <b>id </b><span id="id"></span><br>
-        <b>found? </b><input type=checkbox id="check"></input><br>
+        <b>found? </b><input type=checkbox id="check" style="margin:0px 12px 0px 0px"></input>
         <b>lat lng </b><span id="latLng"></span><br>
-        <b>description </b><span id="text" style="height:100px; width:100%"></span><br><br>
+        <b>heading </b><span id="heading"></span>
+      </div>
+  </div>
+
+    <div class="row" id="data" style="margin:20px 0px">
+			<div class="col-md">
+        <b>description </b><p id="text" style="height:10px; width:100%"></p><br>
         <b>query string</b>
-        <input type="field" id="query_field" style="height:100px; width:100%">
-        <br></br>
-        <input type="button" id="save" value="Save" onclick="exportCSV()">
+        <input type="textarea" class="form-control" id="query_field"></input>
 			</div>
 		</div>
-
 </div>
 
 <script type="text/javascript" src="js/script.js"></script>

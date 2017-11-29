@@ -16,6 +16,7 @@ $.ajax({
 var ids = $.csv.toArray(csv).map(Number);
 var results = Papa.parse(csv_full, {header: true,});
 var data = results['data'];
+var export_data = data;
 var length = data.length;
 
 console.log("KL DATASET LOADED: "+ data.length);
@@ -58,16 +59,33 @@ function renderTemplate(){
     $('#query_field').val(data[ind]['query']);
     $('#id').html(data[ind]['id']);
     $('#check').prop('checked', (data[ind]['query_result'] == 1) ? true : false);
-    $('#latLng').html(data[ind]['lat0']+', '+data[ind]['lng0']);
+    $('#heading').html(data[ind]['heading']);
 
-    var event = new CustomEvent("loc_change", {
-      detail: {
-        lat: parseFloat(data[ind]['lat0']),
-        lng: parseFloat(data[ind]['lng0'])
-        }
-      });
+    if (data[ind]['lat0'] == ''){
+      $('#latLng').html('()');
+      var event = new CustomEvent("loc_change", {
+        detail: false
+        });
+      }
+    else {
+      $('#latLng').html(parseFloat(data[ind]['lat0']).toFixed(4)+', '+parseFloat(data[ind]['lng0']).toFixed(4));
+      var event = new CustomEvent("loc_change", {
+        detail: {
+          lat: parseFloat(data[ind]['lat0']),
+          lng: parseFloat(data[ind]['lng0'])
+          }
+        });
+      }
     document.dispatchEvent(event);
   }
+
+function save(){
+  export_data[ind]['lat0'] = panorama.getPosition().lat();
+  export_data[ind]['lng0'] = panorama.getPosition().lng();
+  export_data[ind]['query_result'] = ($('#check').is(":checked")) ? 1 : 0;
+  export_data[ind]['query'] = $('#query_field').val();
+  export_data[ind]['heading'] = panorama.getPov().heading;
+}
 
 function exportCSV(){
   console.log("EXPORT");
@@ -107,10 +125,28 @@ function exportCSV(){
    map.addListener('click', function(event) {
      sv.getPanorama({location: event.latLng, radius: 50}, processSVData);
    });
+
    document.addEventListener('loc_change', function(event) {
-     map.setCenter(event.detail);
-     sv.getPanorama({location: event.detail, radius: 50}, processSVData);
+     if (!event.detail) {
+       map.setCenter(boston);
+       sv.getPanorama({location: boston, radius: 50}, processSVData);
+     }
+     else {
+       map.setCenter(event.detail);
+       sv.getPanorama({location: event.detail, radius: 50}, processSVData);
+     }
    });
+
+   panorama.addListener('position_changed', function() {
+      // $('#sv_latLng').html(panorama.getPosition() + '');
+      $('#sv_latLng').html(parseFloat(panorama.getPosition().lat()).toFixed(4)+', '+parseFloat(panorama.getPosition().lng()).toFixed(4));
+      map.setCenter(panorama.getPosition());
+    });
+
+    panorama.addListener('pov_changed', function() {
+      $('#sv_heading').html(panorama.getPov().heading + '');
+      $('#sv_pitch').html(panorama.getPov().pitch + '');
+    });
  }
 
  function processSVData(data, status) {
