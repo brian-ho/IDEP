@@ -1,81 +1,146 @@
-//check if browser supports file api and filereader features
-if (window.File && window.FileReader && window.FileList && window.Blob) {
+// Load data
+var csv_full;
+$.ajax({
+    async: false,
+    url: 'data/kl_geocode_0.csv',
+    success: function(data) {csv_full = data;}
+});
+var csv;
+$.ajax({
+    async: false,
+    url: 'data/kl_ids.csv',
+    success: function(data) {csv = data;}
+});
 
-  // Load data
-  var csv_full;
-  $.ajax({
-      async: false,
-      url: 'data/kl_full.csv',
-      success: function(data) {csv_full = data;}
-  });
-  // Initialize array of image IDs and index
-  // var ids = $.csv.toArray(csv).map(Number);
-  var results = Papa.parse(csv_full, {header: true,});
-  var data = results['data'];
-  var length = data.length;
+// Initialize array of image IDs and index
+var ids = $.csv.toArray(csv).map(Number);
+var results = Papa.parse(csv_full, {header: true,});
+var data = results['data'];
+var length = data.length;
 
-  console.log("KL DATASET LODADED: "+ data.length);
-  var ind = 0
+console.log("KL DATASET LOADED: "+ data.length);
+var ind = 0;
 
-  function nextImage(){
-      ind = (length+ind+1) % length;
-      renderTemplate();
-  }
-
-  function prevImage(){
-      ind = (length+ind-1) % length;
+function findImage(){
+    var input = $('#id_field').val();
+    var id = parseInt(input);
+    if(Number.isInteger(id)){
+      ind = ids.indexOf(id);
       renderTemplate();
     }
-
-  function renderTemplate(){
-      console.log(ind);
-      the_url = 'images/'+data[ind]['id']+'.jpg';
-      $('#preview').html("<img src='"+the_url+"' />");
-      $('#text').html(data[ind]['text']);
-      $('#id').html(data[ind]['id']);
-  }
-/*
-   //this is not completely neccesary, just a nice function I found to make the file size format friendlier
-	//http://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable
-	function humanFileSize(bytes, si) {
-	    var thresh = si ? 1000 : 1024;
-	    if(bytes < thresh) return bytes + ' B';
-	    var units = si ? ['kB','MB','GB','TB','PB','EB','ZB','YB'] : ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
-	    var u = -1;
-	    do {
-	        bytes /= thresh;
-	        ++u;
-	    } while(bytes >= thresh);
-	    return bytes.toFixed(1)+' '+units[u];
-	}
-
-  //this function is called when the input loads an image
-	function renderImage(file){
-		var reader = new FileReader();
-		reader.onload = function(event){
-			the_url = event.target.result
-      //of course using a template library like handlebars.js is a better solution than just inserting a string
-			$('#preview').html("<img src='"+the_url+"' />")
-			$('#name').html(file.name)
-			$('#size').html(humanFileSize(file.size, "MB"))
-			$('#type').html(file.type)
-		}
-    //when the file is read it triggers the onload event above.
-		reader.readAsDataURL(file);
-	}
-
-  //watch for change on the
-	$( "#the-photo-file-field" ).change(function() {
-		console.log("photo file has been chosen")
-		//grab the first image in the fileList
-		//in this example we are only loading one file.
-		console.log(this.files[0].size)
-		renderImage(this.files[0])
-	});
-*/
-
-nextImage()
-
-} else {
-  alert('The File APIs are not fully supported in this browser.');
+    else {console.log('NaN');}
 }
+
+function nextImage(){
+    ind = (length+ind+1) % length;
+    renderTemplate();
+}
+
+function prevImage(){
+    ind = (length+ind-1) % length;
+    renderTemplate();
+  }
+
+function renderTemplate(){
+    console.log(ind);
+    kl_url = 'images/'+data[ind]['id']+'.jpg';
+
+    // FOR MAP BOX
+    // if (data[ind]['query_result'] == 1) {
+    //   map_url = 'https://api.mapbox.com/styles/v1/brianho/cj1drel9q00092spdf2ntlhjb/static/'+data[ind]['lng0']+','+data[ind]['lat0']+',15,0,0/250x250?access_token=pk.eyJ1IjoiYnJpYW5obyIsImEiOiJjamExNW1leW4wYXR1MzNsZnM3Z2d5NXJtIn0.dHg8RS63oDHkRsEsuPLGSg'
+    //   $('#preview').html("<img src='"+kl_url+"' /><img src='"+map_url+"' />");
+    // }
+    // else {
+      $('#preview').html("<img class='image' src='"+kl_url+"' />");
+    // }
+
+    $('#text').html(data[ind]['text']);
+    $('#query_field').val(data[ind]['query']);
+    $('#id').html(data[ind]['id']);
+    $('#check').prop('checked', (data[ind]['query_result'] == 1) ? true : false);
+    $('#latLng').html(data[ind]['lat0']+', '+data[ind]['lng0']);
+
+    var event = new CustomEvent("loc_change", {
+      detail: {
+        lat: parseFloat(data[ind]['lat0']),
+        lng: parseFloat(data[ind]['lng0'])
+        }
+      });
+    document.dispatchEvent(event);
+  }
+
+function exportCSV(){
+  console.log("EXPORT");
+   var csvContent = Papa.unparse(data);
+   console.log(csvContent);
+   var encodedUri = encodeURI('data:text/plain;charset=utf-8,'+csvContent);
+   var link = document.createElement("a");
+   link.setAttribute("href", encodedUri);
+   link.setAttribute("download", "kl_update.csv");
+   document.body.appendChild(link); // Required for FF
+   link.click();
+ }
+
+/*
+* Click the map to set a new location for the Street View camera.
+*/
+ var map;
+ var panorama;
+
+ function initialize() {
+   var boston = {lat: 42.377771, lng: -71.116268};
+   var sv = new google.maps.StreetViewService();
+   panorama = new google.maps.StreetViewPanorama(document.getElementById('street-view'));
+
+   // Set up the map.
+   map = new google.maps.Map(document.getElementById('map'), {
+     center: boston,
+     zoom: 16,
+     streetViewControl: false
+   });
+
+   // Set the initial Street View camera to the center of the map
+   sv.getPanorama({location: boston, radius: 50}, processSVData);
+   // Look for a nearby Street View panorama when the map is clicked.
+   // getPanoramaByLocation will return the nearest pano when the
+   // given radius is 50 meters or less.
+   map.addListener('click', function(event) {
+     sv.getPanorama({location: event.latLng, radius: 50}, processSVData);
+   });
+   document.addEventListener('loc_change', function(event) {
+     map.setCenter(event.detail);
+     sv.getPanorama({location: event.detail, radius: 50}, processSVData);
+   });
+ }
+
+ function processSVData(data, status) {
+   if (status === 'OK') {
+     var marker = new google.maps.Marker({
+       position: data.location.latLng,
+       map: map,
+       title: data.location.description
+     });
+
+     panorama.setPano(data.location.pano);
+     panorama.setPov({
+       heading: 270,
+       pitch: 0
+     });
+     panorama.setVisible(true);
+
+     marker.addListener('click', function() {
+       var markerPanoID = data.location.pano;
+       // Set the Pano to use the passed panoID.
+       panorama.setPano(markerPanoID);
+       panorama.setPov({
+         heading: 270,
+         pitch: 0
+       });
+       panorama.setVisible(true);
+     });
+   } else {
+     console.error('Street View data not found for this location.');
+   }
+ }
+
+ renderTemplate()

@@ -1,34 +1,83 @@
 <head>
   <meta charset="utf-8">
   <title>Kevin Lynch Image Labeling</title>
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
   <script src="js/jquery-csv.js"></script>
   <script src="js/papaparse.min.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.3.3/css/foundation.min.css" rel="stylesheet" />
+  <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #street-view {
+        height: 300px;
+        width: 100%;
+      }
+      #map {
+        height: 300px;
+        width: 100%;
+      }
+      .image {
+        height: 300px;
+        width: 300px;
+      }
+    </style>
 </head>
 
 <div class="container">
-	<div class="row" >
-    <!-- the photo demo-->
-		<div class="large-12 columns"  >
 
-				<h3>Kevin Lynch Image Labeling</h3>
-				<input type="button" id="prev" value="Previous Image" onclick="prevImage()">
-				<input type="button" id="next" value="Next Image" onclick="nextImage()">
-        <br><br>
-				<div id="preview" >
-          <!--image will be inserted here-->
-				</div>
-				<div id="data" class="large-8 columns">
-          <br>
-					<p id="text"></p>
-					<p id="id"></p>
-					<!-- <p id="size"></p> -->
-					<!-- <p id="type"></p> -->
-				</div>
+  <div class="row" style="margin:20px 0px">
+    <div class="col-md">
+    <h2>Kevin Lynch Image Labeling</h3>
+    </div>
+  </div>
+
+  <div class="row" style="margin:20px 0px">
+    <div class="col-md-4">
+      <input type="button" id="prev" value="Previous Image" onclick="prevImage()">
+      <input type="button" id="next" value="Next Image" onclick="nextImage()">
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <input type="field" id="id_field">
+      <input type="button" id="next" value="Find Image" onclick="findImage()">
+    </div>
+  </div>
+
+  <div class="row" style="margin:20px 0px">
+      <div class="col-md-3">
+			     <div id="preview" style="height:300px; width:100%"></div>
+			</div>
+      <div class="col-md-8 offset-md-1">
+      <div id="street-view"></div>
+      </div>
+    </div>
+
+    <div class="row" style="margin:20px 0px">
+			<div id="data" class="col-md">
+      <div id="map"></div>
+    </div>
+  </div>
+
+    <div class="row" style="margin:20px 0px">
+			<div id="data" class="col-md">
+        <br>
+        <b>id </b><span id="id"></span><br>
+        <b>found? </b><input type=checkbox id="check"></input><br>
+        <b>lat lng </b><span id="latLng"></span><br>
+        <b>description </b><span id="text" style="height:100px; width:100%"></span><br><br>
+        <b>query string</b>
+        <input type="field" id="query_field" style="height:100px; width:100%">
+        <br></br>
+        <input type="button" id="save" value="Save" onclick="exportCSV()">
+			</div>
 		</div>
-	</div>
 
 </div>
 
 <script type="text/javascript" src="js/script.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY8IKIOTRAbDnKx6LrnoQV0B5Cjm9AjA8&callback=initialize"></script>
