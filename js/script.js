@@ -2,9 +2,10 @@
 var csv_full;
 $.ajax({
     async: false,
-    url: 'data/kl_geocode_0.csv',
+    url: 'data/kl_geocode_1.csv',
     success: function(data) {csv_full = data;}
 });
+// Load IDs only, for index loolup
 var csv;
 $.ajax({
     async: false,
@@ -16,11 +17,11 @@ $.ajax({
 var ids = $.csv.toArray(csv).map(Number);
 var results = Papa.parse(csv_full, {header: true,});
 var data = results['data'];
-var export_data = data;
+var data_backup = data;
 var length = data.length;
-
-console.log("KL DATASET LOADED: "+ data.length);
 var ind = 0;
+
+console.log("KL DATASET LOADED: "+ data.length+' images');
 
 function findImage(){
     var input = $('#id_field').val();
@@ -29,16 +30,16 @@ function findImage(){
       ind = ids.indexOf(id);
       renderTemplate();
     }
-    else {console.log('NaN');}
+    else {console.log('Input is not a valid id.');}
 }
 
 function nextImage(){
-    ind = (length+ind+1) % length;
+    ind = ((length-1)+ind+1) % (length-1);
     renderTemplate();
 }
 
 function prevImage(){
-    ind = (length+ind-1) % length;
+    ind = ((length-1)+ind-1) % (length-1);
     renderTemplate();
   }
 
@@ -59,7 +60,7 @@ function renderTemplate(){
     $('#query_field').val(data[ind]['query']);
     $('#id').html(data[ind]['id']);
     $('#check').prop('checked', (data[ind]['query_result'] == 1) ? true : false);
-    $('#heading').html(data[ind]['heading']);
+    $('#heading').html(data[ind]['heading ']);
 
     if (data[ind]['lat0'] == ''){
       $('#latLng').html('()');
@@ -79,12 +80,15 @@ function renderTemplate(){
     document.dispatchEvent(event);
   }
 
-function save(){
-  export_data[ind]['lat0'] = panorama.getPosition().lat();
-  export_data[ind]['lng0'] = panorama.getPosition().lng();
-  export_data[ind]['query_result'] = ($('#check').is(":checked")) ? 1 : 0;
-  export_data[ind]['query'] = $('#query_field').val();
-  export_data[ind]['heading'] = panorama.getPov().heading;
+function saveChanges(){
+  data[ind]['lat0'] = panorama.getPosition().lat();
+  data[ind]['lng0'] = panorama.getPosition().lng();
+  data[ind]['query_result'] = ($('#check').is(":checked")) ? 1 : 0;
+  data[ind]['query'] = $('#query_field').val();
+  data[ind]['heading'] = panorama.getPov().heading;
+
+
+  console.log(data[ind]['query'] = $('#query_field').val());
 }
 
 function exportCSV(){
@@ -112,7 +116,7 @@ function exportCSV(){
 
    // Set up the map.
    map = new google.maps.Map(document.getElementById('map'), {
-     center: boston,
+     center: {lat: parseFloat(data[ind]['lat0']), lng: parseFloat(data[ind]['lng0'])},
      zoom: 16,
      streetViewControl: false
    });
@@ -134,6 +138,10 @@ function exportCSV(){
      else {
        map.setCenter(event.detail);
        sv.getPanorama({location: event.detail, radius: 50}, processSVData);
+       panorama.setPov({
+         heading: data[ind]['heading'],
+         pitch: 0
+       });
      }
    });
 
@@ -158,10 +166,6 @@ function exportCSV(){
      });
 
      panorama.setPano(data.location.pano);
-     panorama.setPov({
-       heading: 270,
-       pitch: 0
-     });
      panorama.setVisible(true);
 
      marker.addListener('click', function() {
@@ -179,4 +183,6 @@ function exportCSV(){
    }
  }
 
- renderTemplate()
+nextImage();
+prevImage();
+renderTemplate();

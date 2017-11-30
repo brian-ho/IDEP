@@ -51,7 +51,7 @@
       <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value=">" onclick="nextImage()">
       <input type="field" class="form-control form-control-sm mr-sm-2"  id="id_field">
       <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value="Find ID" onclick="findImage()">
-      <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="save" value="Save" onclick="save()">
+      <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="save" value="Save" onclick="saveChanges()">
       <input type="button" class="btn btn-primary btn-sm mr-sm-2" id="export" value="Export" onclick="exportCSV()">
     </form>
     </div>
@@ -72,16 +72,16 @@
   </div>
 
     <div class="row" id="data" style="margin:20px 0px">
-			<div class="col-md">
-        <b>SV lat lng </b><span id="sv_latLng"></span><br>
-        <b>SV pitch </b><span id="sv_pitch"></span><br>
-        <b>SV heading </b><span id="sv_heading"></span>
-      </div>
   			<div class="col-md">
         <b>id </b><span id="id"></span><br>
         <b>found? </b><input type=checkbox id="check" style="margin:0px 12px 0px 0px"></input>
         <b>lat lng </b><span id="latLng"></span><br>
         <b>heading </b><span id="heading"></span>
+      </div>
+			<div class="col-md">
+        <b>SV lat lng </b><span id="sv_latLng"></span><br>
+        <b>SV pitch </b><span id="sv_pitch"></span><br>
+        <b>SV heading </b><span id="sv_heading"></span>
       </div>
   </div>
 
