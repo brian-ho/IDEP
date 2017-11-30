@@ -1,10 +1,11 @@
-// Load data
+// Load full data
 var csv_full;
 $.ajax({
     async: false,
     url: 'data/kl_geocode_1.csv',
     success: function(data) {csv_full = data;}
 });
+
 // Load IDs only, for index loolup
 var csv;
 $.ajax({
@@ -20,9 +21,9 @@ var data = results['data'];
 var data_backup = data;
 var length = data.length;
 var ind = 0;
-
 console.log("KL DATASET LOADED: "+ data.length+' images');
 
+// Search functionality
 function findImage(){
     var input = $('#id_field').val();
     var id = parseInt(input);
@@ -33,16 +34,17 @@ function findImage(){
     else {console.log('Input is not a valid id.');}
 }
 
+// Navigation
 function nextImage(){
     ind = ((length-1)+ind+1) % (length-1);
     renderTemplate();
 }
-
 function prevImage(){
     ind = ((length-1)+ind-1) % (length-1);
     renderTemplate();
   }
 
+// Render an image and data
 function renderTemplate(){
     console.log(ind);
     kl_url = 'images/'+data[ind]['id']+'.jpg';
@@ -55,12 +57,14 @@ function renderTemplate(){
     // else {
       $('#preview').html("<img class='image' src='"+kl_url+"' />");
     // }
-
     $('#text').html(data[ind]['text']);
     $('#query_field').val(data[ind]['query']);
     $('#id').html(data[ind]['id']);
     $('#check').prop('checked', (data[ind]['query_result'] == 1) ? true : false);
-    $('#heading').html(data[ind]['heading ']);
+    $('#exclude').prop('checked', (data[ind]['exclude'] == 1) ? true : false);
+    $('#type').html(data[ind]['type']);
+    $('#heading').html(data[ind]['heading']);
+    $('#counter').html((ind+1)+' / '+ (length-1));
 
     if (data[ind]['lat0'] == ''){
       $('#latLng').html('()');
@@ -83,12 +87,10 @@ function renderTemplate(){
 function saveChanges(){
   data[ind]['lat0'] = panorama.getPosition().lat();
   data[ind]['lng0'] = panorama.getPosition().lng();
-  data[ind]['query_result'] = ($('#check').is(":checked")) ? 1 : 0;
-  data[ind]['query'] = $('#query_field').val();
   data[ind]['heading'] = panorama.getPov().heading;
-
-
-  console.log(data[ind]['query'] = $('#query_field').val());
+  data[ind]['query_result'] = ($('#check').is(":checked")) ? 1 : 0;
+  data[ind]['exclude'] = ($('#exclude').is(":checked")) ? 1 : 0;
+  data[ind]['query'] = $('#query_field').val();
 }
 
 function exportCSV(){
@@ -103,85 +105,112 @@ function exportCSV(){
    link.click();
  }
 
-/*
-* Click the map to set a new location for the Street View camera.
-*/
- var map;
- var panorama;
+// for Google Maps API
+var map;
+var panorama;
 
- function initialize() {
-   var boston = {lat: 42.377771, lng: -71.116268};
-   var sv = new google.maps.StreetViewService();
-   panorama = new google.maps.StreetViewPanorama(document.getElementById('street-view'));
+// Initalize after load
+function initialize() {
+ var boston = {lat: 42.377771, lng: -71.116268};
+ var sv = new google.maps.StreetViewService();
+ var geocoder = new google.maps.Geocoder;
 
-   // Set up the map.
-   map = new google.maps.Map(document.getElementById('map'), {
-     center: {lat: parseFloat(data[ind]['lat0']), lng: parseFloat(data[ind]['lng0'])},
-     zoom: 16,
-     streetViewControl: false
+ // Set up the SV panorama
+ panorama = new google.maps.StreetViewPanorama(document.getElementById('street-view'));
+ // Set the initial Street View camera to the center of the map
+ sv.getPanorama({location: boston, radius: 50}, processSVData);
+
+ // Set up the map
+ map = new google.maps.Map(document.getElementById('map'), {
+   center: {lat: parseFloat(data[ind]['lat0']), lng: parseFloat(data[ind]['lng0'])},
+   zoom: 16,
+   streetViewControl: false
+ });
+
+ // Look for a nearby Street View panorama when the map is clicked.
+ // getPanoramaByLocation will return the nearest pano when the
+ // given radius is 50 meters or less.
+ map.addListener('click', function(event) {
+   sv.getPanorama({location: event.latLng, radius: 50}, processSVData);
+ });
+
+ panorama.addListener('position_changed', function() {
+    // $('#sv_latLng').html(panorama.getPosition() + '');
+    $('#sv_latLng').html(parseFloat(panorama.getPosition().lat()).toFixed(4)+', '+parseFloat(panorama.getPosition().lng()).toFixed(4));
+    map.setCenter(panorama.getPosition());
+  });
+
+  panorama.addListener('pov_changed', function() {
+    $('#sv_heading').html(panorama.getPov().heading + '');
+    $('#sv_pitch').html(panorama.getPov().pitch + '');
+  });
+
+  document.getElementById('geocode').addEventListener('click', function() {
+    geocodeInput(geocoder, map, sv);
+  });
+
+  document.addEventListener('loc_change', function(event) {
+    if (!event.detail) {
+      map.setCenter(boston);
+      sv.getPanorama({location: boston, radius: 50}, processSVData);
+    }
+    else {
+      map.setCenter(event.detail);
+      sv.getPanorama({location: event.detail, radius: 50}, processSVData);
+      panorama.setPov({
+        heading: data[ind]['heading'],
+        pitch: 0
+      });
+    }
+  });
+}
+
+function processSVData(data, status) {
+ if (status === 'OK') {
+   var marker = new google.maps.Marker({
+     position: data.location.latLng,
+     map: map,
+     title: data.location.description
    });
 
-   // Set the initial Street View camera to the center of the map
-   sv.getPanorama({location: boston, radius: 50}, processSVData);
-   // Look for a nearby Street View panorama when the map is clicked.
-   // getPanoramaByLocation will return the nearest pano when the
-   // given radius is 50 meters or less.
-   map.addListener('click', function(event) {
-     sv.getPanorama({location: event.latLng, radius: 50}, processSVData);
-   });
+   panorama.setPano(data.location.pano);
+   panorama.setVisible(true);
 
-   document.addEventListener('loc_change', function(event) {
-     if (!event.detail) {
-       map.setCenter(boston);
-       sv.getPanorama({location: boston, radius: 50}, processSVData);
-     }
-     else {
-       map.setCenter(event.detail);
-       sv.getPanorama({location: event.detail, radius: 50}, processSVData);
-       panorama.setPov({
-         heading: data[ind]['heading'],
-         pitch: 0
-       });
-     }
-   });
-
-   panorama.addListener('position_changed', function() {
-      // $('#sv_latLng').html(panorama.getPosition() + '');
-      $('#sv_latLng').html(parseFloat(panorama.getPosition().lat()).toFixed(4)+', '+parseFloat(panorama.getPosition().lng()).toFixed(4));
-      map.setCenter(panorama.getPosition());
-    });
-
-    panorama.addListener('pov_changed', function() {
-      $('#sv_heading').html(panorama.getPov().heading + '');
-      $('#sv_pitch').html(panorama.getPov().pitch + '');
-    });
- }
-
- function processSVData(data, status) {
-   if (status === 'OK') {
-     var marker = new google.maps.Marker({
-       position: data.location.latLng,
-       map: map,
-       title: data.location.description
+   marker.addListener('click', function() {
+     var markerPanoID = data.location.pano;
+     // Set the Pano to use the passed panoID.
+     panorama.setPano(markerPanoID);
+     panorama.setPov({
+       heading: 270,
+       pitch: 0
      });
-
-     panorama.setPano(data.location.pano);
      panorama.setVisible(true);
-
-     marker.addListener('click', function() {
-       var markerPanoID = data.location.pano;
-       // Set the Pano to use the passed panoID.
-       panorama.setPano(markerPanoID);
-       panorama.setPov({
-         heading: 270,
-         pitch: 0
-       });
-       panorama.setVisible(true);
-     });
-   } else {
-     console.error('Street View data not found for this location.');
-   }
+   });
+ } else {
+   console.error('Street View data not found for this location.');
  }
+}
+
+function geocodeInput(geocoder, map, sv) {
+  var input = document.getElementById('query_field').value;
+  geocoder.geocode({'address': input}, function(results, status) {
+    if (status === 'OK') {
+      map.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+        map: map,
+        position: results[0].geometry.location
+      });
+
+      sv.getPanorama({location: results[0].geometry.location, radius: 50}, processSVData);
+      panorama.setPov({
+        heading: data[ind]['heading'],
+        pitch: 0
+      });
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
 
 nextImage();
 prevImage();

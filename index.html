@@ -17,20 +17,20 @@
         font-size: 12px;
       }
       #street-view {
-        height: 200px;
+        height: 250px;
         width: 100%;
       }
       #map {
-        height: 200px;
+        height: 250px;
         width: 100%;
       }
       .image {
-        height: 200px;
-        width: 200px;
+        height: 250px;
+        width: 250px;
       }
       #query_field{
         display:inline-block;
-        height: 100px;
+        height: 50px;
         width: 100%;
         wrap: 'soft';
       }
@@ -41,20 +41,9 @@
 
   <div class="row" style="margin:10px 0px">
     <div class="col-md">
-    <h5>Lynch-Kepes Image Labeling</h5>
+    <h5 style="display:inline; margin-right:20px" >Lynch-Kepes Image Labeling</h5><span id="counter"></span>
     </div>
   </div>
-
-  <div class="row" id="controls" style="margin:10px 0px">
-    <form class="form-inline">
-      <input type="button" class="btn btn-secondary btn-sm ml-sm-3 mr-sm-2" id="prev" value="<" onclick="prevImage()">
-      <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value=">" onclick="nextImage()">
-      <input type="field" class="form-control form-control-sm mr-sm-2"  id="id_field">
-      <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value="Find ID" onclick="findImage()">
-      <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="save" value="Save" onclick="saveChanges()">
-      <input type="button" class="btn btn-primary btn-sm mr-sm-2" id="export" value="Export" onclick="exportCSV()">
-    </form>
-    </div>
 
   <div class="row" style="margin:10px 0px">
       <div class="col-md-3">
@@ -71,27 +60,47 @@
     </div>
   </div>
 
-    <div class="row" id="data" style="margin:20px 0px">
+    <div class="row" id="data" style="margin:10px 0px">
   			<div class="col-md">
         <b>id </b><span id="id"></span><br>
-        <b>found? </b><input type=checkbox id="check" style="margin:0px 12px 0px 0px"></input>
-        <b>lat lng </b><span id="latLng"></span><br>
-        <b>heading </b><span id="heading"></span>
+        <b>found? </b><input type=checkbox id="check" style="margin:0px 12px 0px 4px"></input>
       </div>
 			<div class="col-md">
+      <b>exclude? </b><input type=checkbox id="exclude" style="margin:0px 12px 0px 4px"></input><br>
+      <b>heading </b><span id="type"></span>
+    </div>
+			<div class="col-md">
+      <b>lat lng </b><span id="latLng"></span><br>
+      <b>heading </b><span id="heading"></span>
+    </div>
+			<div class="col-md">
         <b>SV lat lng </b><span id="sv_latLng"></span><br>
-        <b>SV pitch </b><span id="sv_pitch"></span><br>
         <b>SV heading </b><span id="sv_heading"></span>
+        <!-- <b>SV pitch </b><span id="sv_pitch"></span> -->
       </div>
   </div>
 
-    <div class="row" id="data" style="margin:20px 0px">
+    <div class="row" id="data" style="margin:10px 0px">
 			<div class="col-md">
-        <b>description </b><p id="text" style="height:10px; width:100%"></p><br>
+        <b>description </b><p id="text" style="height:10px; width:100%"></p>
         <b>query string</b>
         <input type="textarea" class="form-control" id="query_field"></input>
 			</div>
 		</div>
+
+<div class="row" id="controls" style="margin:20px 0px">
+  <div class="col-md">
+  <form class="form-inline">
+    <input type="field" class="form-control form-control-sm mr-sm-2"  id="id_field">
+    <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value="Find ID" onclick="findImage()">
+    <input type="button" class="btn btn-secondary btn-sm mr-sm-2" id="prev" value="<" onclick="prevImage()">
+    <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value=">" onclick="nextImage()">
+    <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="geocode" value="Geocode">
+    <input type="button"  class="btn btn-secondary btn-sm mr-sm-5" id="save" value="Save" onclick="saveChanges()">
+    <input type="button" class="btn btn-primary btn-sm mr-sm-2" id="export" value="Export" onclick="exportCSV()">
+  </form>
+  </div>
+  </div>
 </div>
 
 <script type="text/javascript" src="js/script.js"></script>
