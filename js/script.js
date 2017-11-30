@@ -91,6 +91,7 @@ function saveChanges(){
   data[ind]['query_result'] = ($('#check').is(":checked")) ? 1 : 0;
   data[ind]['exclude'] = ($('#exclude').is(":checked")) ? 1 : 0;
   data[ind]['query'] = $('#query_field').val();
+  data[ind]['type'] = $('#type').val();
 }
 
 function exportCSV(){
@@ -152,10 +153,12 @@ function initialize() {
   document.addEventListener('loc_change', function(event) {
     if (!event.detail) {
       map.setCenter(boston);
+      map.checkResize();
       sv.getPanorama({location: boston, radius: 50}, processSVData);
     }
     else {
       map.setCenter(event.detail);
+      map.checkResize();
       sv.getPanorama({location: event.detail, radius: 50}, processSVData);
       panorama.setPov({
         heading: data[ind]['heading'],
@@ -196,6 +199,7 @@ function geocodeInput(geocoder, map, sv) {
   geocoder.geocode({'address': input}, function(results, status) {
     if (status === 'OK') {
       map.setCenter(results[0].geometry.location);
+      map.checkResize();
       var marker = new google.maps.Marker({
         map: map,
         position: results[0].geometry.location
