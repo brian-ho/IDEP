@@ -176,6 +176,7 @@ function processSVData(data, status) {
      map: map,
      title: data.location.description
    });
+   markers.push(marker);
 
    panorama.setPano(data.location.pano);
    panorama.setVisible(true);
@@ -234,8 +235,10 @@ function showMarkers() {
 }
 // Deletes all markers in the array by removing references to them.
 function deleteMarkers() {
+  console.log(markers);
   clearMarkers();
   markers = [];
+  console.log(markers);
 }
 
 nextImage();
