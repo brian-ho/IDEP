@@ -67,7 +67,7 @@
       </div>
 			<div class="col-md">
       <b>exclude? </b><input type=checkbox id="exclude" style="margin:0px 12px 0px 4px"></input><br>
-      <b>type </b><input type=field id="heading"></input>
+      <b>type </b><input type=field id="type"></input>
     </div>
 			<div class="col-md">
       <b>lat lng </b><span id="latLng"></span><br>
@@ -96,6 +96,7 @@
     <input type="button" class="btn btn-secondary btn-sm mr-sm-2" id="prev" value="<" onclick="prevImage()">
     <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value=">" onclick="nextImage()">
     <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="geocode" value="Geocode">
+    <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="clear" value="Clear" onclid="clearMarkers()">
     <input type="button"  class="btn btn-secondary btn-sm mr-sm-5" id="save" value="Save" onclick="saveChanges()">
     <input type="button" class="btn btn-primary btn-sm mr-sm-2" id="export" value="Export" onclick="exportCSV()">
   </form>

@@ -2,7 +2,7 @@
 var csv_full;
 $.ajax({
     async: false,
-    url: 'data/kl_geocode_1.csv',
+    url: 'data/kl_geocode_2.csv',
     success: function(data) {csv_full = data;}
 });
 
@@ -63,7 +63,7 @@ function renderTemplate(){
     $('#check').prop('checked', (data[ind]['query_result'] == 1) ? true : false);
     $('#exclude').prop('checked', (data[ind]['exclude'] == 1) ? true : false);
     $('#type').html(data[ind]['type']);
-    $('#heading').html(data[ind]['heading']);
+    $('#heading').html(parseInt(data[ind]['heading']));
     $('#counter').html((ind+1)+' / '+ (length-1));
 
     if (data[ind]['lat0'] == ''){
@@ -108,6 +108,7 @@ function exportCSV(){
 
 // for Google Maps API
 var map;
+var markers = [];
 var panorama;
 
 // Initalize after load
@@ -153,15 +154,15 @@ function initialize() {
   document.addEventListener('loc_change', function(event) {
     if (!event.detail) {
       map.setCenter(boston);
-      map.checkResize();
+      // map.checkResize();
       sv.getPanorama({location: boston, radius: 50}, processSVData);
     }
     else {
       map.setCenter(event.detail);
-      map.checkResize();
+      // map.checkResize();
       sv.getPanorama({location: event.detail, radius: 50}, processSVData);
       panorama.setPov({
-        heading: data[ind]['heading'],
+        heading: parseFloat(data[ind]['heading']) ,
         pitch: 0
       });
     }
@@ -199,21 +200,42 @@ function geocodeInput(geocoder, map, sv) {
   geocoder.geocode({'address': input}, function(results, status) {
     if (status === 'OK') {
       map.setCenter(results[0].geometry.location);
-      map.checkResize();
+      // map.checkResize();
       var marker = new google.maps.Marker({
         map: map,
         position: results[0].geometry.location
       });
+      markers.push(marker);
 
       sv.getPanorama({location: results[0].geometry.location, radius: 50}, processSVData);
       panorama.setPov({
-        heading: data[ind]['heading'],
+        heading: parseFloat(data[ind]['heading']),
         pitch: 0
       });
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
   });
+}
+
+// Sets the map on all markers in the array.
+function setMapOnAll(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+// Removes the markers from the map, but keeps them in the array.
+function clearMarkers() {
+  setMapOnAll(null);
+}
+// Shows any markers currently in the array.
+function showMarkers() {
+  setMapOnAll(map);
+}
+// Deletes all markers in the array by removing references to them.
+function deleteMarkers() {
+  clearMarkers();
+  markers = [];
 }
 
 nextImage();
