@@ -17,16 +17,16 @@
         font-size: 12px;
       }
       #street-view {
-        height: 250px;
+        height: 500px;
         width: 100%;
       }
       #map {
-        height: 250px;
+        height: 500px;
         width: 100%;
       }
       .image {
-        height: 250px;
-        width: 250px;
+        height: 300px;
+        width: 300px;
       }
       #query_field{
         display:inline-block;
@@ -34,6 +34,12 @@
         width: 100%;
         wrap: 'soft';
       }
+       #constraint{
+          display:inline-block;
+          height: 50px;
+          width: 100%;
+          wrap: 'soft';
+        }
     </style>
 </head>
 
@@ -67,7 +73,7 @@
       </div>
 			<div class="col-md">
       <b>exclude? </b><input type=checkbox id="exclude" style="margin:0px 12px 0px 4px"></input><br>
-      <b>type </b><input type=field id="type"></input>
+      <b>type </b><input type=text id="type"></input>
     </div>
 			<div class="col-md">
       <b>lat lng </b><span id="latLng"></span><br>
@@ -81,10 +87,15 @@
   </div>
 
     <div class="row" id="data" style="margin:10px 0px">
+			<div class="col-md-9">
+          <b>description </b><p id="text" style="height:10px; width:100%"></p>
+          <b>query string</b>
+          <input type="textarea" class="form-control" id="query_field"></input>
+			</div>
 			<div class="col-md">
-        <b>description </b><p id="text" style="height:10px; width:100%"></p>
-        <b>query string</b>
-        <input type="textarea" class="form-control" id="query_field"></input>
+          <br><p id="spacer" style="height:10px; width:100%"></p>
+          <b>city</b>
+          <input type="textarea" class="form-control" id="constraint"></input>
 			</div>
 		</div>
 

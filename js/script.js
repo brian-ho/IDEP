@@ -2,7 +2,7 @@
 var csv_full;
 $.ajax({
     async: false,
-    url: 'data/kl_geocode_2.csv',
+    url: 'data/kl_geocode_2b.csv',
     success: function(data) {csv_full = data;}
 });
 
@@ -28,7 +28,7 @@ function findImage(){
     var input = $('#id_field').val();
     var id = parseInt(input);
     if(Number.isInteger(id)){
-      ind = ids.indexOf(id);
+      ind = ids.indexOf(id)-1;
       renderTemplate();
     }
     else {console.log('Input is not a valid id.');}
@@ -62,9 +62,10 @@ function renderTemplate(){
     $('#id').html(data[ind]['id']);
     $('#check').prop('checked', (data[ind]['query_result'] == 1) ? true : false);
     $('#exclude').prop('checked', (data[ind]['exclude'] == 1) ? true : false);
-    $('#type').html(data[ind]['type']);
+    $('#type').val(data[ind]['type']);
     $('#heading').html(parseInt(data[ind]['heading']));
     $('#counter').html((ind+1)+' / '+ (length-1));
+    $('#constraint').val(data[ind]['constraint']);
 
     if (data[ind]['lat0'] == ''){
       $('#latLng').html('()');
@@ -88,10 +89,12 @@ function saveChanges(){
   data[ind]['lat0'] = panorama.getPosition().lat();
   data[ind]['lng0'] = panorama.getPosition().lng();
   data[ind]['heading'] = panorama.getPov().heading;
+  data[ind]['pitch'] = panorama.getPov().pitch;
   data[ind]['query_result'] = ($('#check').is(":checked")) ? 1 : 0;
   data[ind]['exclude'] = ($('#exclude').is(":checked")) ? 1 : 0;
   data[ind]['query'] = $('#query_field').val();
   data[ind]['type'] = $('#type').val();
+  data[ind]['constraint'] = $('#constraint').val();
 }
 
 function exportCSV(){
@@ -163,7 +166,7 @@ function initialize() {
       sv.getPanorama({location: event.detail, radius: 50}, processSVData);
       panorama.setPov({
         heading: parseFloat(data[ind]['heading']) ,
-        pitch: 0
+        pitch: parseFloat(data[ind]['pitch'])
       });
     }
   });
@@ -198,7 +201,8 @@ function processSVData(data, status) {
 
 function geocodeInput(geocoder, map, sv) {
   var input = document.getElementById('query_field').value;
-  geocoder.geocode({'address': input}, function(results, status) {
+  var constraint = document.getElementById('constraint').value;
+  geocoder.geocode({'address': input+' '+constraint+', MA'}, function(results, status) {
     if (status === 'OK') {
       map.setCenter(results[0].geometry.location);
       // map.checkResize();
@@ -235,10 +239,8 @@ function showMarkers() {
 }
 // Deletes all markers in the array by removing references to them.
 function deleteMarkers() {
-  console.log(markers);
   clearMarkers();
   markers = [];
-  console.log(markers);
 }
 
 nextImage();
