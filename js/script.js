@@ -2,7 +2,7 @@
 var csv_full;
 $.ajax({
     async: false,
-    url: 'data/kl_geocode_2b.csv',
+    url: 'data/kl_geocode_2e.csv',
     success: function(data) {csv_full = data;}
 });
 

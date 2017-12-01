@@ -1,53 +1,70 @@
 <!DOCTYPE html>
 <style>
+  body{
+    /*background-color: black;*/
+  }
   #map-holder {
     width: 100vw;
     height: 100vh;
   }
 </style>
+
+
 <div id="map-holder"></div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
 <script>
-var svg = d3.select("svg");
-var projection = d3.geoConicConformal()
-  .parallels([41 + 43 / 60, 42 + 41 / 60])
-  .rotate([71 + 30 / 60, -41]);
-  path = d3.geoPath(projection);
-
-  var svg = d3
-    .select("#map-holder")
+  var svg = d3.select("#map-holder")
     .append("svg")
     // set to the same size as the "map-holder" div
     .attr("width", $("#map-holder").width())
     .attr("height", $("#map-holder").height());
 
-countriesGroup = svg
-    .append("g")
-    .attr("id", "map");
-// add a background rectangle
-countriesGroup
-    .append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", w)
-    .attr("height", h);
+// countriesGroup = svg
+//     .append("g")
+//     .attr("id", "map");
+// // add a background rectangle
+// countriesGroup
+//     .append("rect")
+//     .attr("x", 0)
+//     .attr("y", 0)
+//     .attr("width", $("#map-holder").width())
+//     .attr("height", $("#map-holder").height());
 
-d3.json("test.json", function(error, test) {
+d3.json("geo/City_of_Boston_Boundary.geojson", function(error, data) {
   if (error) throw error;
+  var center = d3.geoCentroid(data);
+  var scale  = 150;
 
-  var states = topojson.feature(test, mx.objects.states),
-      municipalities = topojson.feature(test, mx.objects.municipalities);
+  console.log(center);
 
-  projection.fitSize([960, 600], states);
+  // var svg = d3.select("svg");
+  var projection = d3.geoMercator()//.geoConicConformal()
+    // .parallels([41 + 43 / 60, 42 + 41 / 60])
+    // .rotate([71 + 30 / 60, -41])
+    .center(center)
+    .scale(100000);
 
-  d3.select("#municipalities")
-      .datum(municipalities)
-      .attr("d", path);
+    console.log(projection.scale(), projection.center())
 
-  d3.select("#states")
-      .datum(states)
-      .attr("d", path);
-});
+  var path = d3.geoPath().projection(projection);
+
+  svg.selectAll("path")
+      .data(data.features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("stroke-width", 10);
+
+
+      console.log("drawn");
+  });
+
+  // svg.append("path")
+  //   .attr("d", path(data.features))
+  //   .attr("stroke","white")
+  //   .attr("fill","white");
+  // });
 </script>
