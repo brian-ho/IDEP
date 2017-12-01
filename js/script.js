@@ -55,7 +55,7 @@ function renderTemplate(){
     //   $('#preview').html("<img src='"+kl_url+"' /><img src='"+map_url+"' />");
     // }
     // else {
-      $('#preview').html("<img class='image' src='images/"+kl_url+"' />");
+      $('#preview').html("<img class='image' src='"+kl_url+"' />");
     // }
     $('#text').html(data[ind]['text']);
     $('#query_field').val(data[ind]['query']);
