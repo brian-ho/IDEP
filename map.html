@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <style>
   body{
-    /*background-color: black;*/
+    background-color: black;
   }
   #map-holder {
     width: 100vw;
@@ -33,35 +33,59 @@
 //     .attr("width", $("#map-holder").width())
 //     .attr("height", $("#map-holder").height());
 
-d3.json("geo/City_of_Boston_Boundary.geojson", function(error, data) {
+d3.queue()
+  .defer(d3.json, "geo/City_of_Boston_Boundary.geojson")
+  .defer(d3.json, "geo/Public_Libraries.geojson")
+  .defer(d3.csv, "data/kl_geocode_2g.csv")
+  .await(makeMyMap);
+
+
+// d3.json("geo/City_of_Boston_Boundary.geojson", function(error, data) {
+function makeMyMap(error, boundary, libraries, kl){
   if (error) throw error;
-  var center = d3.geoCentroid(data);
-  var scale  = 150;
 
-  console.log(center);
-
-  // var svg = d3.select("svg");
-  var projection = d3.geoMercator()//.geoConicConformal()
-    // .parallels([41 + 43 / 60, 42 + 41 / 60])
-    // .rotate([71 + 30 / 60, -41])
-    .center(center)
-    .scale(100000);
+  console.log(kl);
+  // NAD83 Massachusetts Mainalnd (EPSG:26986)
+  var projection = d3.geoConicConformal()
+    .parallels([41 + 43 / 60, 42 + 41 / 60])
+    .rotate([71 + 30 / 60, -41])
+    .fitExtent([[0,0],[2000,1500]], boundary)
+    ;
 
     console.log(projection.scale(), projection.center())
 
   var path = d3.geoPath().projection(projection);
 
-  svg.selectAll("path")
-      .data(data.features)
+  svg.selectAll(".boundary")
+      .data(boundary.features)
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("stroke-width", 10);
+      .attr("stroke-width", 1)
+      .attr("stroke","white")
+      .attr("fill","grey");
 
+  svg.selectAll(".libraries")
+      .data(libraries.features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("stroke-width", 1)
+      .attr("stroke","red")
+      .attr("fill","red");
 
-      console.log("drawn");
-  });
-
+  svg.selectAll("circles")
+      .data(kl)
+      .enter()
+      .append("circle")
+      .attr("r", 2)
+      .attr("cx", function(d) {console.log(projection([d.lng0, d.lat0]));return projection([d.lng0, d.lat0])[0]} )
+      .attr("cy", function(d) {return projection([d.lng0, d.lat0])[1]} )
+      // .attr("stroke-width", 1)
+      // .attr("stroke","blue")
+      .attr("fill","white");
+  // });
+}
   // svg.append("path")
   //   .attr("d", path(data.features))
   //   .attr("stroke","white")
