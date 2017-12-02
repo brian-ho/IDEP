@@ -1,0 +1,32 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#data {
+  font-size: 12px;
+}
+#street-view {
+  height: 300px;
+  width: 100%;
+}
+#map {
+  height: 200px;
+  width: 100%;
+}
+.image {
+  height: 300px;
+  width: 300px;
+}
+#query_field{
+  display:inline-block;
+  height: 50px;
+  width: 100%;
+  wrap: 'soft';
+}
+ #constraint{
+    display:inline-block;
+    height: 50px;
+    width: 100%;
+    wrap: 'soft';
+  }
