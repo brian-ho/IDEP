@@ -16,7 +16,10 @@
 
 d3.queue()
   .defer(d3.json, "geo/circle_5km.geojson")
-    .defer(d3.json, "geo/circle_7_5km.geojson")
+  .defer(d3.json, "geo/circle_7_5km.geojson")
+  .defer(d3.json, "geo/circle_10km.geojson")
+  .defer(d3.json, "geo/circle_15km.geojson")
+  .defer(d3.json, "geo/coastline_20km.geojson")
   // .defer(d3.json, "geo/mass_roads_5km.json")
   .defer(d3.json, "geo/City_of_Boston_Boundary.json")
   .defer(d3.csv, "data/kl_geocode_2g.csv")
@@ -24,17 +27,15 @@ d3.queue()
 
 
 // d3.json("geo/City_of_Boston_Boundary.geojson", function(error, data) {
-function makeMyMap(error, circle, circle2, boundary, kl){
+function makeMyMap(error, circle, circle2, circle3, circle4, coast, boundary, kl){
   if (error) throw error;
 
-console.log(circle.features);
-console.log(circle2.features);
 
   // NAD83 Massachusetts Mainalnd (EPSG:26986)
   var projection = d3.geoConicConformal()
     .parallels([41 + 43 / 60, 42 + 41 / 60])
     .rotate([71 + 30 / 60, -41])
-    .fitExtent([[0,0],[width,height]], circle);
+    .fitExtent([[0,0],[width,height]], circle4);
   var path = d3.geoPath().projection(projection);
   console.log(projection.scale(), projection.center());
 
@@ -47,14 +48,24 @@ console.log(circle2.features);
       .attr("stroke","white");
 
   svg.selectAll(".circle")
-      .data(circle.features)
+      .data(circle4.features)
       // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
       .enter()
       .append("path")
       .attr("d", path)
+      .attr("fill", "none")
       .attr("stroke", "white")
       .attr("stroke-width", .125);
 
+  svg.selectAll(".coast")
+      .data(coast.features)
+      // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("fill", "none")
+      .attr("stroke", "white")
+      .attr("stroke-width", .125);
   // svg.selectAll(".circle2")
   //     .data(circle2.features)
   //     // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
