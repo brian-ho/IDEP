@@ -20,14 +20,13 @@ d3.queue()
   .defer(d3.json, "geo/circle_15km.geojson")
   .defer(d3.json, "geo/coastline_20km.geojson")
   .defer(d3.json, "geo/hydro.geojson")
-  .defer(d3.json, "geo/hydro2.geojson")
   .defer(d3.json, "geo/City_of_Boston_Boundary.json")
   .defer(d3.csv, "data/kl_geocode_2g.csv")
   .await(makeMyMap);
 
 
 // d3.json("geo/City_of_Boston_Boundary.geojson", function(error, data) {
-function makeMyMap(error, circle, circle2, coast, hydro, hydro2, boundary, kl){
+function makeMyMap(error, circle, circle2, coast, hydro, boundary, kl){
   if (error) throw error;
 
   // NAD83 Massachusetts Mainalnd (EPSG:26986)
@@ -35,10 +34,31 @@ function makeMyMap(error, circle, circle2, coast, hydro, hydro2, boundary, kl){
     .parallels([41 + 43 / 60, 42 + 41 / 60])
     .rotate([71 + 30 / 60, -41])
     .fitExtent([[0,0],[width,height]], circle2);
+
   var path = d3.geoPath().projection(projection);
+  var maxZoom = projection.scale();
   console.log(projection.scale(), projection.center());
 
-  svg.selectAll(".boundary")
+  var zoom = d3.zoom()
+      // no longer in d3 v4 - zoom initialises with zoomIdentity, so it's already at origin
+      // .translate([0, 0])
+      // .scale(1)
+      .scaleExtent([1, 8])
+      .on("zoom", zoomed);
+
+ svg.call(zoom)
+  .on("dblclick", function() { d3.event.preventDefault(); })
+  .on("wheel", function() { d3.event.preventDefault(); });
+
+  svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", reset);
+
+  var g = svg.append('g');
+
+  g.selectAll(".boundary")
       .data(topojson.feature(boundary, boundary.objects.City_of_Boston_Boundary).features)
       .enter()
       .append("path")
@@ -46,7 +66,7 @@ function makeMyMap(error, circle, circle2, coast, hydro, hydro2, boundary, kl){
       .attr("stroke-width", .125)
       .attr("stroke","white");
 
-  svg.selectAll(".circle")
+  g.selectAll(".circle")
       .data(circle.features)
       // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
       .enter()
@@ -56,7 +76,7 @@ function makeMyMap(error, circle, circle2, coast, hydro, hydro2, boundary, kl){
       .attr("stroke", "white")
       .attr("stroke-width", .125);
 
-  svg.selectAll(".coast")
+  g.selectAll(".coast")
       .data(coast.features)
       // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
       .enter()
@@ -66,7 +86,7 @@ function makeMyMap(error, circle, circle2, coast, hydro, hydro2, boundary, kl){
       .attr("stroke", "white")
       .attr("stroke-width", .125);
 
-    svg.selectAll(".hydro")
+    g.selectAll(".hydro")
         .data(hydro.features)
         // .data(topojson.feature(hydro, hydro.objects.hydro_20km_dissolve).features)
         .enter()
@@ -84,7 +104,7 @@ function makeMyMap(error, circle, circle2, coast, hydro, hydro2, boundary, kl){
   //     .attr("stroke", "white")
   //     .attr("stroke-width", .125);
 
-  svg.selectAll("circles")
+  g.selectAll("circles")
       .data(kl)
       .enter()
       .append("circle")
@@ -103,10 +123,21 @@ function makeMyMap(error, circle, circle2, coast, hydro, hydro2, boundary, kl){
 
       .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
       .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
-  // });
+
+function reset() {
+  console.log("clicked!");
+  // active.classed("active", false);
+  // active = d3.select(null);
+
+  svg.transition()
+      .duration(750)
+      // .call( zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1) ); // not in d3 v4
+      .call( zoom.transform, d3.zoomIdentity ); // updated for d3 v4
 }
-  // svg.append("path")
-  //   .attr("d", path(data.features))
-  //   .attr("stroke","white")
-  //   .attr("fill","white");
-  // });
+
+
+function zoomed() {
+  // g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+  g.attr("transform", d3.event.transform); // updated for d3 v4
+  }
+}
