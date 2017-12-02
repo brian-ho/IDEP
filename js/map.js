@@ -27,26 +27,23 @@
 
 d3.queue()
   .defer(d3.json, "geo/circle_rad_5km.geojson")
-  .defer(d3.json, "geo/City_of_Boston_Boundary.geojson")
-  .defer(d3.json, "geo/Public_Libraries.geojson")
+  // .defer(d3.json, "geo/mass_roads_5km.json")
+  .defer(d3.json, "geo/City_of_Boston_Boundary.json")
   .defer(d3.csv, "data/kl_geocode_2g.csv")
   .await(makeMyMap);
 
 
 // d3.json("geo/City_of_Boston_Boundary.geojson", function(error, data) {
-function makeMyMap(error, outer, boundary, libraries, kl){
+function makeMyMap(error, circle, boundary, kl){
   if (error) throw error;
 
-  console.log(kl);
   // NAD83 Massachusetts Mainalnd (EPSG:26986)
   var projection = d3.geoConicConformal()
     .parallels([41 + 43 / 60, 42 + 41 / 60])
     .rotate([71 + 30 / 60, -41])
-    .fitExtent([[0,0],[width,height]], outer)
+    .fitExtent([[0,0],[width,height]], circle)
     ;
-
-    console.log(projection.scale(), projection.center())
-
+    // console.log(projection.scale(), projection.center())
   var path = d3.geoPath().projection(projection);
 
   // console.log(outer);
@@ -60,21 +57,22 @@ function makeMyMap(error, outer, boundary, libraries, kl){
   //     .attr("fill","grey");
 
   svg.selectAll(".boundary")
-      .data(boundary.features)
+      // .data(boundary.features)
+      .data(topojson.feature(boundary, boundary.objects.City_of_Boston_Boundary).features)
       .enter()
       .append("path")
       .attr("d", path)
       .attr("stroke-width", .125)
       .attr("stroke","white");
 
-  // svg.selectAll(".libraries")
-  //     .data(libraries.features)
+  // svg.selectAll(".roads")
+  //     // .data(boundary.features)
+  //     .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
   //     .enter()
   //     .append("path")
   //     .attr("d", path)
-  //     .attr("stroke-width", 1)
-  //     .attr("stroke","red")
-  //     .attr("fill","red");
+  //     .attr("stroke", "white")
+  //     .attr("stroke-width", .125);
 
   svg.selectAll("circles")
       .data(kl)
