@@ -22,3 +22,7 @@ img {
   width: 200px;
   height: 200px;
 }
+.background {
+  fill: none;
+  pointer-events: all;
+}
