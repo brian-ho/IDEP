@@ -52,7 +52,7 @@ d3.queue()
   // .defer(d3.json, "geo/district_bldg.geojson")
   // .defer(d3.json, "geo/edge_parcel.geojson")
   // .defer(d3.json, "geo/edges_buffer_1.geojson")
-  .defer(d3.json, "geo/KL.json")
+  .defer(d3.json, "geo/KLelements.json")
   // .defer(d3.json, "geo/node_seg.geojson")
   .defer(d3.csv, "data/kl_geocode_2g.csv")
   .await(makeMyMap);
