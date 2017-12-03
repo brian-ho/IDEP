@@ -227,7 +227,7 @@ function animate() {
 
     // Create highlight geometry
     g.append("circle")
-      .attr("class", "highlight"))
+      .attr("class", "highlight")
       .attr("r", 2)
       .attr("opacity", .5)
       .attr("stroke", "cyan")
