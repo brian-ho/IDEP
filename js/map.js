@@ -1,27 +1,50 @@
+// Get page dimensions
 var width = $("#map-holder").width();
 var height = $("#map-holder").height();
+var margin = 100; // Set for projector (offset from edge)
+
+// Create a canvas, same as div
 var svg = d3.select("#map-holder")
   .append("svg")
-  // set to the same size as the "map-holder" div
   .attr("width", width)
   .attr("height", height);
 
+// Create a tooltip
 var tooltip = d3.select("#map-holder")
 	.append("div")
 	.style("position", "absolute")
 	.style("z-index", "10")
 	.style("visibility", "hidden");
 
-tooltip.append("p")
-  .attr("id", "tool-id")
-	.text("123");
-tooltip.append("img")
-  .attr("id", "tool-img")
-	.text("123");
-tooltip.append("p")
-  .attr("id", "tool-text")
-	.text("a simple tooltip");
+  tooltip.append("p")
+    .attr("id", "tool-id")
+  	.text("123");
+  tooltip.append("img")
+    .attr("id", "tool-img")
+  	.text("123");
+  tooltip.append("p")
+    .attr("id", "tool-text")
+  	.text("a simple tooltip");
 
+var callout = d3.select("#map-holder")
+  .append("div")
+	.style("position", "absolute")
+	.style("z-index", "10")
+  .style("visibility", "visible")
+  .attr("id", "callout");
+
+  callout.append("p")
+    .attr("id", "callout-id")
+  	.text("123");
+  callout.append("img")
+    .attr("id", "callout-img")
+  	.text("123");
+  callout.append("p")
+    .attr("id", "callout-text")
+  	.text("a simple tooltip");
+
+// Load in geospatial data layers
+// TODO consolidate to topoJSON
 d3.queue()
   .defer(d3.json, "geo/circle_5km.geojson")
   // .defer(d3.json, "geo/circle_7_5km.geojson")
@@ -37,37 +60,41 @@ d3.queue()
   .defer(d3.csv, "data/kl_geocode_2g.csv")
   .await(makeMyMap);
 
-
-// d3.json("geo/City_of_Boston_Boundary.geojson", function(error, data) {
+// Function to draw map
 function makeMyMap(error, circle, circle2, boundary,landmark, kl){
   if (error) throw error;
 
-  // NAD83 Massachusetts Mainalnd (EPSG:26986)
+  // Set projection to NAD83 Massachusetts Mainalnd (EPSG:26986)
   var projection = d3.geoConicConformal()
     .parallels([41 + 43 / 60, 42 + 41 / 60])
     .rotate([71 + 30 / 60, -41])
-    .fitExtent([[0,0],[width,height]], circle2);
+    .fitExtent([[margin, margin],[width-margin,height-margin]], circle); // Center for projector
 
+  // Set up path and zoom
   var path = d3.geoPath().projection(projection);
-  var maxZoom = projection.scale();
-  console.log(projection.scale(), projection.center());
-
   var zoom = d3.zoom()
-      .scaleExtent([1, 15]) // This is a relative zoom level (go figure)
+      .scaleExtent([.75, 15]) // This is a relative zoom level (go figure)
       .on("zoom", zoomed);
 
- svg.call(zoom)
-  .on("wheel", function() { d3.event.preventDefault(); });
+  console.log(projection.scale(), projection.center());
+  // Disable scrolling
+  svg.call(zoom)
+    .on("wheel", function() { d3.event.preventDefault(); });
 
+  // Background listens for click events to reset view
   svg.append("rect")
     .attr("class", "background")
     .attr("width", width)
     .attr("height", height)
     .on("click", reset);
 
+  // Group to hold geometry
   var g = svg.append('g')
     .attr("class", "geometry");
-  //
+
+  // Geospatial layers drawn here
+  // TODO consolidate, CSS attributes, fix draw order
+
   // g.selectAll(".boundary")
   //     .data(topojson.feature(boundary, boundary.objects.City_of_Boston_Boundary).features)
   //     .enter()
@@ -158,96 +185,54 @@ function makeMyMap(error, circle, circle2, boundary,landmark, kl){
       .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
       .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
-
+// Animation implementation
 var n = Object.keys(kl).length;
-var i = -1; // a counter!
+var i = -1;
 
 function animate() {
-  i = (i + 100) % n;
-  console.log(i);
-  /*
-  d3.transition()
-      .duration(1250)
-      .on("start", function() {
-        })
-      .tween("scale", function() {
-      */
+  i = (i + 101) % n;
 
+    // Delete previous highlight
+    g.selectAll(".highlight")
+      .transition()
+      .duration(2500)
+      .attr("r",2)
+      .on("end", function() {this.remove()})
 
-        g.selectAll(".highlight")
-          .transition()
-          .duration(2500)
-          .attr("r",1)
-          .on("end", function() {this.remove()})
+    // d3.selectAll('.dots').filter(function(d, j) { return j!=i; })
+    //   .transition()
+    //   .duration(2500)
+    //   .attr("fill", "cyan")
+    //   .attr("r", 1)
+    //   .delay(1000);
+    //   // .style("z-index", -1);
 
-        d3.selectAll('.dots').filter(function(d, j) { return j!=i; })
-          .transition()
-          .duration(2500)
-          .attr("fill", "cyan")
-          .attr("r", 1)
-          .delay(1000);
-          // .style("z-index", -1);
+    // Filter returns data to be highlighted
+    var highlight_data = d3.selectAll('.dots').filter(function(d, j) { return j==i; });
 
-        var highlight = d3.selectAll('.dots').filter(function(d, j) { return j==i; });
+    // Create highlight geometry
+    g.append("circle")
+      .attr("class", "highlight")
+      .attr("fill", "red")
+      .attr("r", 2)
+      .attr("opacity", .5)
+      .attr("cx", highlight_data.attr("cx"))
+      .attr("cy", highlight_data.attr("cy"))
+      .transition()
+      .duration(2500)
+      .attr("r", 100)
+      .on("start", function(){
+        console.log((highlight_data.attr("cy") - height)/4 + "px");
+        return
+        callout.style("top", (highlight_data.attr("cy") - height)/4 + "px")
+          .style("left", (highlight_data.attr("cx") - width)/4 + "px");})
+      .on("end", animate);
+  };
 
-        g.append("circle")
-          .attr("class", "highlight")
-          .attr("fill", "red")
-          .attr("r", 1)
-          .attr("opacity", .5)
-          .attr("cx", highlight.attr("cx"))
-          .attr("cy", highlight.attr("cy"))
-          .transition()
-          .duration(2500)
-          .attr("r", 100)
-          .on("end", animate);
-        // .style("z-index", 100)
-
-    };
+// Call animate to set it off!
 animate();
 
-/*
-/////
-      var globe = {type: "Sphere"},
-          land = topojson.feature(world, world.objects.land),
-          countries = topojson.feature(world, world.objects.countries).features,
-          borders = topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }),
-          i = -1,
-          n = countries.length;
-
-      countries = countries.filter(function(d) {
-        return names.some(function(n) {
-          if (d.id == n.id) return d.name = n.name;
-        });
-      }).sort(function(a, b) {
-        return a.name.localeCompare(b.name);
-      });
-
-      (function transition() {
-        d3.transition()
-            .duration(1250)
-            .each("start", function() {
-              title.text(countries[i = (i + 1) % n].name);
-            })
-            .tween("rotate", function() {
-              var p = d3.geo.centroid(countries[i]),
-                  r = d3.interpolate(projection.rotate(), [-p[0], -p[1]]);
-              return function(t) {
-                projection.rotate(r(t));
-                c.clearRect(0, 0, width, height);
-                c.fillStyle = "#ccc", c.beginPath(), path(land), c.fill();
-                c.fillStyle = "#f00", c.beginPath(), path(countries[i]), c.fill();
-                c.strokeStyle = "#fff", c.lineWidth = .5, c.beginPath(), path(borders), c.stroke();
-                c.strokeStyle = "#000", c.lineWidth = 2, c.beginPath(), path(globe), c.stroke();
-              };
-            })
-          .transition()
-            .each("end", transition);
-      })();
-    }
-/////
-*/
-
+// Reset zoom and extents
 function reset() {
   console.log("clicked!");
   // active.classed("active", false);
@@ -257,6 +242,7 @@ function reset() {
       .call( zoom.transform, d3.zoomIdentity ); // updated for d3 v4
     }
 
+// Zoom control
 function zoomed() {
   g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
   g.attr("transform", d3.event.transform);
