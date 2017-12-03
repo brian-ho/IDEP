@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <head>
-  <meta charset="utf-8">
-  <title>MAKING A NEW IMAGE OF THE CITY</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://unpkg.com/topojson@3"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed:100,200,300,400,500,700|Noto+Serif:400,400i,700,700i" rel="stylesheet">
+  <link rel="stylesheet" href="css/map.css">
 </head>
 
 <body>
-  <div class="container">
 
-    <div class="row" style="margin-top: 40px">
-      <div class="col-md">
-        <h1>Making a new Image of the City</h1>
-        <p>Brian Ho - Harvard GSD MDE 2018</p>
-      </div>
-    </div>
+<div class="container">
+  <h1>The Image of the City, <i>redux</i></h1>
 
-    <div class="row">
-      <div class="col-md">
-        <a href="/label.html">go label some</a><br>
-        <a href="/map.html">go look at some</a>
-      </div>
-    </div>
-
+  <div id="intro">
+      <i>This book is about the look of cities, and whether this look is of any importance, and whether it can be changed. The urban landscape, among its many roles, is also something to be seen, to be remembered, and to delight in. Giving visual forn to the city is a special kind of design problem, and a rather new one at that.</i>
   </div>
+  <div id="footer">
+      <p><a href="http://www.ho-brian.com">Brian Ho</a> - Harvard GSD and SEAS, MDE 2018</p>
+      <p>> <a href="/label.html">label</a> some images</a></p>
+  </div>
+</div>
+
+<div style="clear: both;" id="map-holder"></div>
+
 </body>
+
+<script type="text/javascript" src="js/map.js"></script>

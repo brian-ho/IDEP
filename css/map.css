@@ -37,6 +37,14 @@ a:hover{
   pointer-events: all;
   cursor: crosshair;
 }
+.nodes {
+  pointer-events: all;
+  cursor: crosshair;
+}
+.landmarks {
+  pointer-events: all;
+  cursor: crosshair;
+}
 #map-holder {
   width: 100vw;
   height: 100vh;
@@ -53,6 +61,7 @@ a:hover{
   width:25%;
 }
 #footer {
+  width: inherit;
   position: fixed;
   bottom: 10px;
 }

@@ -45,20 +45,13 @@ var callout = d3.select("#map-holder")
 // TODO consolidate to topoJSON
 d3.queue()
   .defer(d3.json, "geo/circle_5km.geojson")
-  // .defer(d3.json, "geo/circle_7_5km.geojson")
-  // // .defer(d3.json, "geo/circle_10km.geojson")
-  .defer(d3.json, "geo/circle_10km.geojson")
   .defer(d3.json, "geo/hydro.geojson")
-  // .defer(d3.json, "geo/district_bldg.geojson")
-  // .defer(d3.json, "geo/edge_parcel.geojson")
-  // .defer(d3.json, "geo/edges_buffer_1.geojson")
   .defer(d3.json, "geo/KLelements.json")
-  // .defer(d3.json, "geo/node_seg.geojson")
   .defer(d3.csv, "data/kl_geocode_2g.csv")
   .await(makeMyMap);
 
 // Function to draw map
-function makeMyMap(error, circle, circle2, hydro, elements, kl){
+function makeMyMap(error, circle, hydro, elements, kl){
   if (error) throw error;
 
   // Set projection to NAD83 Massachusetts Mainalnd (EPSG:26986)
@@ -74,8 +67,9 @@ function makeMyMap(error, circle, circle2, hydro, elements, kl){
       .on("zoom", zoomed);
 
   console.log(projection.scale(), projection.center());
-  // Disable scrolling
-  svg.call(zoom)
+
+  // Disable scrolling throughout!
+  d3.select("body").call(zoom)
     .on("wheel", function() { d3.event.preventDefault(); });
 
   // Background listens for click events to reset view
@@ -91,7 +85,6 @@ function makeMyMap(error, circle, circle2, hydro, elements, kl){
 
   // Geospatial layers drawn here
   // TODO consolidate, CSS attributes, fix draw order
-
   var circleBounds = g.selectAll(".circle")
       .data(circle.features)
       // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
@@ -101,11 +94,12 @@ function makeMyMap(error, circle, circle2, hydro, elements, kl){
       .attr("fill", "none")
       .attr("stroke", "none");
 
-  // TODO Re-export proper background with correct origin
+  // Background diagram
+  // TODO Re-export proper background with correct origin to avoid manual scaling
   var circleX = (circleBounds.node().getBBox().width)*.47;
   var circleY = (circleBounds.node().getBBox().height)*.47;
 
-  g.append("image")
+  var sketch = g.append("image")
       .attr("id", "sketch")
       .attr("width",  circleX + "px")
       .attr("height", circleY + "px")
@@ -123,38 +117,12 @@ g.selectAll(".hydro")
       .attr("stroke", "white")
       .attr("stroke-width", .125);
 
-  // g.selectAll(".districts")
-  //     .data(districts.features)
-  //     // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
-  //     .enter()
-  //     .append("path")
-  //     .attr("d", path)
-  //     .attr("opacity", 0.3)
-  //     .attr("fill", "white")
-  //     .attr("stroke", "none");
-
-  // g.selectAll(".edges")
-  //     .data(edges.features)
-  //     // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
-  //     .enter()
-  //     .append("path")
-  //     .attr("d", path)
-  //     .attr("opacity", 0.3)
-  //     .attr("stroke-width", 6)
-  //     .attr("fill", "white");
-
-  g.selectAll(".landmarks")
-      .data(topojson.feature(elements, elements.objects.KLlandmarks).features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("fill", "white");
-
   g.selectAll(".paths")
       .data(topojson.feature(elements, elements.objects.KLpaths).features)
       .enter()
       .append("path")
       .attr("d", path)
+      .attr("class", "paths")
       .attr("stroke", "white")
       .attr("fill", "none")
       .attr("stroke-width", .5);
@@ -164,22 +132,52 @@ g.selectAll(".hydro")
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("fill", "#222");
+      .attr("class", "nodes")
+      .attr("opacity", 0.5)
+      .attr("fill", "#222")
+      .on("mouseover", function(d){
+        console.log(d);
+        tooltip.style("visibility", "visible")
+        d3.select("#tool-id").text(d.properties.text)
+        d3.select("#tool-text").text('');})
+      .on("mousemove", function(){
+        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+      .on("mouseout", function(){;
+        tooltip.style("visibility", "hidden");});
 
   g.selectAll(".districts")
       .data(topojson.feature(elements, elements.objects.KLdistricts).features)
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("fill", "grey")
-      .attr("stroke", "black")
-      .attr("stroke-width", .25);
+      .attr("fill", "grey");
+      // .attr("stroke", "black")
+      // .attr("stroke-width", .25);
+
+  g.selectAll(".landmarks")
+      .data(topojson.feature(elements, elements.objects.KLlandmarks).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("class", "landmarks")
+      .attr("fill", "white")
+      .on("mouseover", function(d){
+        console.log(d);
+        tooltip.style("visibility", "visible")
+        d3.select("#tool-id").text(d.properties.text)
+        d3.select("#tool-text").text('');})
+      .on("mousemove", function(){
+        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+      .on("mouseout", function(){
+        tooltip.style("visibility", "hidden");});
 
   g.selectAll(".edges")
       .data(topojson.feature(elements, elements.objects.KLedges).features)
       .enter()
       .append("path")
       .attr("d", path)
+      .attr("class", "edges")
+      .attr("fill", "none")
       .attr("stroke", "white")
       .attr("stroke-width", 1);
 
@@ -198,11 +196,9 @@ g.selectAll(".hydro")
         tooltip.style("visibility", "visible")
         d3.select("#tool-img").attr("src", "images/"+d.id+".jpg");
         d3.select("#tool-id").text(d.id);
-        d3.select("#tool-text").text(d.text);
-      })
-
+        d3.select("#tool-text").text(d.text);})
       .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-      .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+      .on("mouseout", function(){tooltip.style("visibility", "hidden");});
 
 // Animation implementation
 var n = Object.keys(kl).length;
