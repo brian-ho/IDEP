@@ -227,14 +227,15 @@ function animate() {
 
     // Create highlight geometry
     g.append("circle")
-      .attr("class", "highlight")
-      .attr("fill", "red")
+      .attr("class", "highlight"))
       .attr("r", 2)
       .attr("opacity", .5)
+      .attr("stroke", "cyan")
+      .attr("fill", "none")
       .attr("cx", highlight_data.attr("cx"))
       .attr("cy", highlight_data.attr("cy"))
       .transition()
-      .duration(2500)
+      .duration(1250)
       .attr("r", 100)
       .on("start", function(){
         callout.style("top", ((highlight_data.attr("cy") - (height/2))+height/2 + "px"))
