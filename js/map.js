@@ -12,9 +12,9 @@ var svg = d3.select("#map-holder")
 // Create a tooltip
 var tooltip = d3.select("#map-holder")
 	.append("div")
-	.style("position", "absolute")
 	.style("z-index", "10")
-	.style("visibility", "hidden");
+	.style("visibility", "hidden")
+  .style("position", "absolute");
 
   tooltip.append("p")
     .attr("id", "tool-id")
@@ -27,10 +27,10 @@ var tooltip = d3.select("#map-holder")
 
 var callout = d3.select("#map-holder")
   .append("div")
-	.style("position", "absolute")
 	.style("z-index", "10")
   .style("visibility", "visible")
-  .attr("id", "callout");
+  .attr("id", "callout")
+  .style("position", "absolute");
 
   callout.append("p")
     .attr("id", "callout-id")
@@ -41,9 +41,6 @@ var callout = d3.select("#map-holder")
     .attr("id", "callout-text")
   	.text("a simple tooltip");
 
-  var sketch = svg.append("img")
-    .attr("src", "geo/city_image.png");
-
 // Load in geospatial data layers
 // TODO consolidate to topoJSON
 d3.queue()
@@ -51,8 +48,7 @@ d3.queue()
   // .defer(d3.json, "geo/circle_7_5km.geojson")
   // // .defer(d3.json, "geo/circle_10km.geojson")
   .defer(d3.json, "geo/circle_10km.geojson")
-  // .defer(d3.json, "geo/hydro.geojson")
-  .defer(d3.json, "geo/City_of_Boston_Boundary.json")
+  .defer(d3.json, "geo/hydro.geojson")
   // .defer(d3.json, "geo/district_bldg.geojson")
   // .defer(d3.json, "geo/edge_parcel.geojson")
   // .defer(d3.json, "geo/edges_buffer_1.geojson")
@@ -62,7 +58,7 @@ d3.queue()
   .await(makeMyMap);
 
 // Function to draw map
-function makeMyMap(error, circle, circle2, boundary,landmark, kl){
+function makeMyMap(error, circle, circle2, hydro,landmark, kl){
   if (error) throw error;
 
   // Set projection to NAD83 Massachusetts Mainalnd (EPSG:26986)
@@ -93,19 +89,10 @@ function makeMyMap(error, circle, circle2, boundary,landmark, kl){
   var g = svg.append('g')
     .attr("class", "geometry");
 
-  console.log(boundary);
   // Geospatial layers drawn here
   // TODO consolidate, CSS attributes, fix draw order
-  g.selectAll(".boundary")
-      .data(topojson.feature(boundary, boundary.objects.City_of_Boston_Boundary).features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .attr("fill", "none")
-      .attr("stroke-width", 3)
-      .attr("stroke","white");
 
-  g.selectAll(".circle")
+  var circleBounds = g.selectAll(".circle")
       .data(circle.features)
       // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
       .enter()
@@ -115,16 +102,28 @@ function makeMyMap(error, circle, circle2, boundary,landmark, kl){
       .attr("stroke", "white")
       .attr("stroke-width", .125);
 
-  // g.selectAll(".hydro")
-  //     .data(hydro.features)
-  //     // .data(topojson.feature(hydro, hydro.objects.hydro_20km_dissolve).features)
-  //     .enter()
-  //     .append("path")
-  //     .attr("d", path)
-  //     // .attr("fill", "grey")
-  //     .attr("stroke", "white")
-  //     .attr("stroke-width", .125);
-  //
+  // TODO Re-export proper background with correct origin
+  var circleX = (circleBounds.node().getBBox().width)*.47;
+  var circleY = (circleBounds.node().getBBox().height)*.47;
+
+  g.append("image")
+      .attr("id", "sketch")
+      .attr("width",  circleX + "px")
+      .attr("height", circleY + "px")
+      .attr("x", (width/2)-(circleX/1.535))
+      .attr("y", (height/2)-(circleY/3.6))
+      .attr("xlink:href", "geo/city_image.png");
+
+g.selectAll(".hydro")
+      .data(hydro.features)
+      // .data(topojson.feature(hydro, hydro.objects.hydro_20km_dissolve).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      // .attr("fill", "grey")
+      .attr("stroke", "white")
+      .attr("stroke-width", .125);
+
   // g.selectAll(".districts")
   //     .data(districts.features)
   //     // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
@@ -229,8 +228,6 @@ function animate() {
         d3.select("#callout-img").attr("src", "images/"+highlight_data.datum().id+".jpg");
         d3.select("#callout-id").text(highlight_data.datum().id);
         d3.select("#callout-text").text(highlight_data.datum().text);
-          // .text(d.id)
-          // .text(d.text)
           ;})
       .on("end", animate);
   };

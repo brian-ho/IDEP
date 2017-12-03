@@ -20,10 +20,11 @@ a {
 a:hover{
   color: grey;
 }
-.intro {
-  width: 33%;
+.container {
   line-height: 1.75em;
-  margn-top: 10px;
+  margin: 40px 100px;
+	position: absolute;
+  z-index: 10;
 }
 .background {
   fill: none;
@@ -39,6 +40,7 @@ a:hover{
 #map-holder {
   width: 100vw;
   height: 100vh;
+	position: absolute;
 }
 #sketch {
   width: 100vw;
@@ -47,11 +49,10 @@ a:hover{
   opacity: 0.5;
   z-index: -1;
 }
-#header {
-  margin: 40px 100px;
-  position: absolute;
+#intro {
+  width:25%;
 }
 #footer {
   position: fixed;
-  bottom: 0px;
+  bottom: 10px;
 }
