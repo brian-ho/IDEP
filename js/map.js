@@ -20,8 +20,7 @@ var tooltip = d3.select("#map-holder")
     .attr("id", "tool-id")
   	.text("123");
   tooltip.append("img")
-    .attr("id", "tool-img")
-  	.text("123");
+    .attr("id", "tool-img");
   tooltip.append("p")
     .attr("id", "tool-text")
   	.text("a simple tooltip");
@@ -37,11 +36,13 @@ var callout = d3.select("#map-holder")
     .attr("id", "callout-id")
   	.text("123");
   callout.append("img")
-    .attr("id", "callout-img")
-  	.text("123");
+    .attr("id", "callout-img");
   callout.append("p")
     .attr("id", "callout-text")
   	.text("a simple tooltip");
+
+  var sketch = svg.append("img")
+    .attr("src", "geo/city_image.png");
 
 // Load in geospatial data layers
 // TODO consolidate to topoJSON
@@ -92,16 +93,17 @@ function makeMyMap(error, circle, circle2, boundary,landmark, kl){
   var g = svg.append('g')
     .attr("class", "geometry");
 
+  console.log(boundary);
   // Geospatial layers drawn here
   // TODO consolidate, CSS attributes, fix draw order
-
-  // g.selectAll(".boundary")
-  //     .data(topojson.feature(boundary, boundary.objects.City_of_Boston_Boundary).features)
-  //     .enter()
-  //     .append("path")
-  //     .attr("d", path)
-  //     .attr("stroke-width", .125)
-  //     .attr("stroke","white");
+  g.selectAll(".boundary")
+      .data(topojson.feature(boundary, boundary.objects.City_of_Boston_Boundary).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("fill", "none")
+      .attr("stroke-width", 3)
+      .attr("stroke","white");
 
   g.selectAll(".circle")
       .data(circle.features)
@@ -222,10 +224,14 @@ function animate() {
       .duration(2500)
       .attr("r", 100)
       .on("start", function(){
-        console.log((highlight_data.attr("cy") - height)/4 + "px");
-        return
-        callout.style("top", (highlight_data.attr("cy") - height)/4 + "px")
-          .style("left", (highlight_data.attr("cx") - width)/4 + "px");})
+        callout.style("top", ((highlight_data.attr("cy") - (height/2))+height/2 + "px"))
+          .style("left", ((highlight_data.attr("cx") - (width/2))+width/2 + "px"));
+        d3.select("#callout-img").attr("src", "images/"+highlight_data.datum().id+".jpg");
+        d3.select("#callout-id").text(highlight_data.datum().id);
+        d3.select("#callout-text").text(highlight_data.datum().text);
+          // .text(d.id)
+          // .text(d.text)
+          ;})
       .on("end", animate);
   };
 

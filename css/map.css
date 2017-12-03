@@ -40,6 +40,13 @@ a:hover{
   width: 100vw;
   height: 100vh;
 }
+#sketch {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  opacity: 0.5;
+  z-index: -1;
+}
 #header {
   margin: 40px 100px;
   position: absolute;
