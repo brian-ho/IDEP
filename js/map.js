@@ -52,13 +52,13 @@ d3.queue()
   // .defer(d3.json, "geo/district_bldg.geojson")
   // .defer(d3.json, "geo/edge_parcel.geojson")
   // .defer(d3.json, "geo/edges_buffer_1.geojson")
-  .defer(d3.json, "geo/landmark_bldg.geojson")
+  .defer(d3.json, "geo/KL.json")
   // .defer(d3.json, "geo/node_seg.geojson")
   .defer(d3.csv, "data/kl_geocode_2g.csv")
   .await(makeMyMap);
 
 // Function to draw map
-function makeMyMap(error, circle, circle2, hydro,landmark, kl){
+function makeMyMap(error, circle, circle2, hydro, elements, kl){
   if (error) throw error;
 
   // Set projection to NAD83 Massachusetts Mainalnd (EPSG:26986)
@@ -99,8 +99,7 @@ function makeMyMap(error, circle, circle2, hydro,landmark, kl){
       .append("path")
       .attr("d", path)
       .attr("fill", "none")
-      .attr("stroke", "white")
-      .attr("stroke-width", .125);
+      .attr("stroke", "none");
 
   // TODO Re-export proper background with correct origin
   var circleX = (circleBounds.node().getBBox().width)*.47;
@@ -145,14 +144,13 @@ g.selectAll(".hydro")
   //     .attr("fill", "white");
 
   g.selectAll(".landmarks")
-      .data(landmark.features)
-      // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
+      .data(topojson.feature(elements, elements.objects.KLlandmarks).features)
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("opacity", .9)
-      .attr("stroke-width", 6)
-      .attr("fill", "white");
+      .attr("stroke", "white")
+      .attr("fill", "white")
+      .attr("stroke-width", 2);
 
   // g.selectAll(".nodes")
   //     .data(nodes.features)
