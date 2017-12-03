@@ -148,20 +148,40 @@ g.selectAll(".hydro")
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("stroke", "white")
-      .attr("fill", "white")
-      .attr("stroke-width", 2);
+      .attr("fill", "white");
 
-  // g.selectAll(".nodes")
-  //     .data(nodes.features)
-  //     // .data(topojson.feature(roads, roads.objects.mass_roads_5km).features)
-  //     .enter()
-  //     .append("path")
-  //     .attr("d", path)
-  //     .attr("opacity", 1)
-  //     .attr("stroke-width", .5)
-  //     .attr("stroke", "white")
-  //     .attr("fill", "none");
+  g.selectAll(".paths")
+      .data(topojson.feature(elements, elements.objects.KLpaths).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("stroke", "white")
+      .attr("fill", "none")
+      .attr("stroke-width", .5);
+
+  g.selectAll(".nodes")
+      .data(topojson.feature(elements, elements.objects.KLnodes).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("fill", "#222");
+
+  g.selectAll(".districts")
+      .data(topojson.feature(elements, elements.objects.KLdistricts).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("fill", "grey")
+      .attr("stroke", "black")
+      .attr("stroke-width", .25);
+
+  g.selectAll(".edges")
+      .data(topojson.feature(elements, elements.objects.KLedges).features)
+      .enter()
+      .append("path")
+      .attr("d", path)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1);
 
   g.selectAll(".dots")
       .data(kl)
