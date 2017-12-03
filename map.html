@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <head>
   <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="https://d3js.org/topojson.v2.min.js"></script>
+  <script src="https://unpkg.com/topojson@3"></script>
   <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed:100,200,300,400,500,700|Noto+Serif:400,400i,700,700i" rel="stylesheet">
   <link rel="stylesheet" href="css/map.css">
 </head>
 
 <body>
-  <div style="position:fixed">
-        <h1>The Image of the City, <i>redux</i></h1>
-        <p> Here's some text about this Here's some text about this Here's some text about this Here's some text about this </p>
+
+<div class="container">
+  <h1>The Image of the City, <i>redux</i></h1>
+
+  <div id="intro">
+      <i>This book is about the look of cities, and whether this look is of any importance, and whether it can be changed. The urban landscape, among its many roles, is also something to be seen, to be remembered, and to delight in. Giving visual forn to the city is a special kind of design problem, and a rather new one at that.</i>
   </div>
-  <div id="map-holder"></div>
+  <div id="footer">
+      <p><a href="http://www.ho-brian.com">Brian Ho</a> - Harvard GSD and SEAS, MDE 2018</p>
+  </div>
+</div>
+
+<div id="map-holder"></div>
 
 </body>
 
