@@ -96,16 +96,16 @@ function makeMyMap(error, circle, hydro, elements, kl){
 
   // Background diagram
   // TODO Re-export proper background with correct origin to avoid manual scaling
-  var circleX = (circleBounds.node().getBBox().width)*.47;
-  var circleY = (circleBounds.node().getBBox().height)*.47;
+  // var circleX = (circleBounds.node().getBBox().width)*.47;
+  // var circleY = (circleBounds.node().getBBox().height)*.47;
 
-  var sketch = g.append("image")
-      .attr("id", "sketch")
-      .attr("width",  circleX + "px")
-      .attr("height", circleY + "px")
-      .attr("x", (width/2)-(circleX/1.535))
-      .attr("y", (height/2)-(circleY/3.6))
-      .attr("xlink:href", "geo/city_image.png");
+  // var sketch = g.append("image")
+  //     .attr("id", "sketch")
+  //     .attr("width",  circleX + "px")
+  //     .attr("height", circleY + "px")
+  //     .attr("x", (width/2)-(circleX/1.535))
+  //     .attr("y", (height/2)-(circleY/3.6))
+  //     .attr("xlink:href", "geo/city_image.png");
 
 g.selectAll(".hydro")
       .data(hydro.features)
@@ -113,7 +113,7 @@ g.selectAll(".hydro")
       .enter()
       .append("path")
       .attr("d", path)
-      // .attr("fill", "grey")
+      .attr("fill", "#black")
       .attr("stroke", "white")
       .attr("stroke-width", .125);
 
@@ -134,7 +134,7 @@ g.selectAll(".hydro")
       .attr("d", path)
       .attr("class", "nodes")
       .attr("opacity", 0.5)
-      .attr("fill", "#222")
+      .attr("fill", "white")
       .on("mouseover", function(d){
         console.log(d);
         tooltip.style("visibility", "visible")
@@ -150,7 +150,7 @@ g.selectAll(".hydro")
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("fill", "grey");
+      .attr("fill", "black");
       // .attr("stroke", "black")
       // .attr("stroke-width", .25);
 
@@ -190,7 +190,6 @@ g.selectAll(".hydro")
       .attr("cx", function(d) {return projection([d.lng0, d.lat0])[0]} )
       .attr("cy", function(d) {return projection([d.lng0, d.lat0])[1]} )
       .attr("fill","cyan")
-
       .on("mouseover", function(d){
         console.log(d.id);
         tooltip.style("visibility", "visible")
