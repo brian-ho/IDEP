@@ -113,9 +113,9 @@ g.selectAll(".hydro")
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("fill", "#black")
+      .attr("fill", "black")
       .attr("stroke", "white")
-      .attr("stroke-width", .125);
+      .attr("stroke-width", .25);
 
   g.selectAll(".paths")
       .data(topojson.feature(elements, elements.objects.KLpaths).features)
