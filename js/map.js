@@ -47,7 +47,7 @@ d3.queue()
   .defer(d3.json, "geo/circle_5km.geojson")
   .defer(d3.json, "geo/hydro.geojson")
   .defer(d3.json, "geo/KLelements.json")
-  .defer(d3.csv, "data/kl_geocode_2g.csv")
+  .defer(d3.csv, "data/kl_geocode_2h.csv")
   .await(makeMyMap);
 
 // Function to draw map

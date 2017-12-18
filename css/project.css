@@ -1,5 +1,4 @@
-body {
-  overflow: hidden;
+  body { 
   background-color: black;
   color: white;
   font-family: 'Barlow Semi Condensed', sans-serif;
@@ -16,7 +15,7 @@ img {
 }
 a {
   color: cyan;
-  text-decoration: none;
+  text-decoration: none;   
 }
 a:hover{
   color: grey;
