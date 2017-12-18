@@ -134,7 +134,7 @@ g.selectAll(".hydro")
       .attr("d", path)
       .attr("class", "nodes")
       .attr("opacity", 0.5)
-      .attr("fill", "white")
+      .attr("fill", "#222")
       .on("mouseover", function(d){
         console.log(d);
         tooltip.style("visibility", "visible")
@@ -150,7 +150,7 @@ g.selectAll(".hydro")
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("fill", "black");
+      .attr("fill", "grey");
       // .attr("stroke", "black")
       // .attr("stroke-width", .25);
 
