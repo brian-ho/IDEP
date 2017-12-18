@@ -150,7 +150,7 @@ g.selectAll(".hydro")
       .enter()
       .append("path")
       .attr("d", path)
-      .attr("fill", "grey");
+      .attr("fill", "grey ");
       // .attr("stroke", "black")
       // .attr("stroke-width", .25);
 
