@@ -1,0 +1,68 @@
+  body { 
+  background-color: black;
+  color: white;
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  font-weight:200;
+  position:relative;
+}
+h1 {
+  font-family: 'Noto Serif', serif;
+  font-weight:200;
+}
+img {
+  width: 200px;
+  height: 200px;
+}
+a {
+  color: cyan;
+  text-decoration: none;   
+}
+a:hover{
+  color: grey;
+}
+.container {
+  line-height: 1.75em;
+  margin: 40px 100px;
+	position: absolute;
+  z-index: 10;
+}
+.background {
+  fill: black;
+  pointer-events: all;
+}
+.geometry {
+  pointer-events: none;
+}
+.dots {
+  pointer-events: all;
+  cursor: crosshair;
+}
+.nodes {
+
+  pointer-events: all;
+  cursor: crosshair;
+}
+.landmarks {
+  pointer-events: all;
+  cursor: crosshair;
+}
+#map-holder {
+  width: 100vw;
+  height: 100vh;
+	position: absolute;
+}
+#sketch {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  opacity: 0.5;
+  z-index: -1;
+}
+#intro {
+  width:25%;
+}
+#footer {
+  width: inherit;
+  position: fixed;
+  bottom: 10px;
+}
