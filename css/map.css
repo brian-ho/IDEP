@@ -26,6 +26,7 @@ a:hover{
   margin: 40px 100px;
 	position: absolute;
   z-index: 10;
+  pointer-events: none;
 }
 .background {
   fill: none;
@@ -79,6 +80,7 @@ a:hover{
   opacity: .4;
   -webkit-transition: .4s;
   transition: .4s;
+  pointer-events: all;
 }
 
 .switch:hover{
