@@ -98,16 +98,16 @@ function makeMyMap(error, circle, hydro, elements, kl){
 
   // Background diagram
   // TODO Re-export proper background with correct origin to avoid manual scaling
-  // var circleX = (circleBounds.node().getBBox().width)*.47;
-  // var circleY = (circleBounds.node().getBBox().height)*.47;
+  var circleX = (circleBounds.node().getBBox().width)*.47;
+  var circleY = (circleBounds.node().getBBox().height)*.47;
 
-  // var sketch = g.append("image")
-  //     .attr("id", "sketch")
-  //     .attr("width",  circleX + "px")
-  //     .attr("height", circleY + "px")
-  //     .attr("x", (width/2)-(circleX/1.535))
-  //     .attr("y", (height/2)-(circleY/3.6))
-  //     .attr("xlink:href", "geo/city_image.png");
+  var sketch = g.append("image")
+      .attr("id", "sketch")
+      .attr("width",  circleX + "px")
+      .attr("height", circleY + "px")
+      .attr("x", (width/2)-(circleX/1.535))
+      .attr("y", (height/2)-(circleY/3.6))
+      .attr("xlink:href", "geo/city_image.png");
 
 g.selectAll(".hydro")
       .data(hydro.features)
