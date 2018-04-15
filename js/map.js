@@ -266,7 +266,8 @@ function animate() {
       .attr("r", 100)
       .on("start", function(){
         callout.style("top", ((highlight_data.attr("cy") - (height/2))+height/2 + "px"))
-          .style("left", ((highlight_data.attr("cx") - (width/2))+width/2 + "px"));
+          .style("left", ((highlight_data.attr("cx") - (width/2))+width/2 + "px"))
+          .style("visibilty", "visible");
         d3.select("#callout-img").attr("src", "images/"+highlight_data.datum().id+".jpg");
         d3.select("#callout-id").text(highlight_data.datum().id);
         d3.select("#callout-text").text(highlight_data.datum().text);
@@ -279,9 +280,9 @@ function animate() {
           .transition()
           .duration(2500)
           .attr("r",2)
-          .on("end", function() {this.remove()})
-      }
+          .on("end", function() {this.remove(); callout.style("visibility", "hidden")});
     };
+  }
 
 $(document).ready(function() {
   $("#toggle").change(function() {
