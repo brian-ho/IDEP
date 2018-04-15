@@ -41,6 +41,8 @@ var callout = d3.select("#map-holder")
     .attr("id", "callout-text")
   	.text("a simple tooltip");
 
+var g;
+
 // Load in geospatial data layers
 // TODO consolidate to topoJSON
 d3.queue()
@@ -54,7 +56,7 @@ d3.queue()
 function makeMyMap(error, circle, hydro, elements, kl){
   if (error) throw error;
 
-  // Set projection to NAD83 Massachusetts Mainalnd (EPSG:26986)
+    // Set projection to NAD83 Massachusetts Mainalnd (EPSG:26986)
   var projection = d3.geoConicConformal()
     .parallels([41 + 43 / 60, 42 + 41 / 60])
     .rotate([71 + 30 / 60, -41])
@@ -80,7 +82,7 @@ function makeMyMap(error, circle, hydro, elements, kl){
     .on("click", reset);
 
   // Group to hold geometry
-  var g = svg.append('g')
+  g = svg.append('g')
     .attr("class", "geometry");
 
   // Geospatial layers drawn here
@@ -199,13 +201,39 @@ g.selectAll(".hydro")
       .on("mousemove", function(){return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
       .on("mouseout", function(){tooltip.style("visibility", "hidden");});
 
+
+  // Reset zoom and extents
+  function reset() {
+    console.log("reset!");
+    // active.classed("active", false);
+    // active = d3.select(null);
+    svg.transition()
+        .duration(750)
+        .call( zoom.transform, d3.zoomIdentity ); // updated for d3 v4
+      }
+
+  // Zoom control
+  function zoomed() {
+    g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+    g.attr("transform", d3.event.transform);
+    d3.selectAll(".dots")
+      .attr("r", 2 / d3.event.transform.k + "px");
+      // updated for d3 v4
+    }
+
+
+    // Call animate to set it off!
+    animate();
+};
 // Animation implementation
-var n = Object.keys(kl).length;
+// var n = Object.keys(kl).length;
+var n = 1909;
 var i = -1;
+var toggle_state = true;
 
 function animate() {
+  if (toggle_state) {
   i = (i + 101) % n;
-
     // Delete previous highlight
     g.selectAll(".highlight")
       .transition()
@@ -244,27 +272,21 @@ function animate() {
         d3.select("#callout-text").text(highlight_data.datum().text);
           ;})
       .on("end", animate);
-  };
+      }
+      else {
+        // Delete previous highlight
+        g.selectAll(".highlight")
+          .transition()
+          .duration(2500)
+          .attr("r",2)
+          .on("end", function() {this.remove()})
+      }
+    };
 
-// Call animate to set it off!
-animate();
-
-// Reset zoom and extents
-function reset() {
-  console.log("clicked!");
-  // active.classed("active", false);
-  // active = d3.select(null);
-  svg.transition()
-      .duration(750)
-      .call( zoom.transform, d3.zoomIdentity ); // updated for d3 v4
-    }
-
-// Zoom control
-function zoomed() {
-  g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
-  g.attr("transform", d3.event.transform);
-  d3.selectAll(".dots")
-    .attr("r", 2 / d3.event.transform.k + "px");
-    // updated for d3 v4
-  }
-}
+$(document).ready(function() {
+  $("#toggle").change(function() {
+        toggle_state = (toggle_state ? false : true);
+        console.log('TOGGLE '+toggle_state);
+        if (toggle_state){ animate(); }
+  });
+});
