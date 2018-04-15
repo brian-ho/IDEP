@@ -1,0 +1,8 @@
+
+Making a New City Image ... or, an Eye for AI
+Harvard MDE @ GSD + SEAS
+Independent Design Engineering Project
+Copyright 2018 Brian Ho
+
+Please cite author when using data and code in any
+personal or professional project.
