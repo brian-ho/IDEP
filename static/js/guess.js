@@ -1,22 +1,14 @@
-var map = L.map('map').setView([42.36, -71.06], 13);
+console.log(appConfig);
+
 var accessToken = appConfig.mapbox_key;
 var aws_mt = appConfig.aws_MT;
 var amazon_host = appConfig.amazon_host;
-var lng = appConfig.lng;
-var lat = appConfig.lat;
+var image_loc = L.latLng(appConfig.lat, appConfig.lng);
 var marker;
 var startTime;
+var trial = 0;
 
-var circleIcon = L.icon({
-    iconUrl: 'leaf-green.png',
-    shadowUrl: 'leaf-shadow.png',
-
-    iconSize:     [38, 95], // size of the icon
-    shadowSize:   [50, 64], // size of the shadow
-    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-    shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-});
+var map = L.map('map').setView([42.36, -71.06], 13);
 
 function completeRead() {
   startTime = Date.now();
@@ -38,19 +30,26 @@ function clickMap(e) {
 }
 
 function makeGuess() {
+    var guess = L.latLng(document.getElementById("guessY").value, document.getElementById("guessX").value);
+
   	var findTime = (Date.now() - startTime)/1000.0;
   	document.getElementById("findTime").value = findTime;
     document.getElementById("guess").disabled = true;
     document.getElementById("submitBtn").disabled = false;
 
-    marker = L.marker([lat, lng])
+    marker = L.marker(image_loc)
     marker.addTo(map);
-
-    line = L.polyline([[document.getElementById("guessY").value,document.getElementById("guessX").value],[lat, lng]])
+    line = L.polyline([guess,image_loc])
     line.addTo(map);
-    map.fitBounds(line.getBounds(), { padding: [10,10] });
-
+    map.options.zoomSnap = 0.1;
+    map.fitBounds(line.getBounds(), {padding:[50,50]});
     map.off('click', clickMap);
+    map.options.zoomSnap = 1;
+
+    var distance = image_loc.distanceTo(guess);
+    console.log(distance);
+    document.getElementById("score").innerText = distance.toFixed(2)+" meters";
+
 }
 
 function submitForm() {
@@ -61,12 +60,12 @@ function submitForm() {
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.open("POST", "/submit");
       xmlhttp.send(d);
-      form.action = amazon_host;
+      form.action = (trial <= 4) ? "/guess" : amazon_host;
       form.submit();
     }
     // Website only
     else {
-      form.action = "/submit"
+      form.action = (trial <= 4) ? "/guess" : "/submit";
       form.submit();
     }
 }

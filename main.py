@@ -84,22 +84,21 @@ def guess():
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
-    query = "SELECT name, url, x, y FROM images ORDER BY test_guess ASC, random() LIMIT 1;"
+    query = "SELECT name, url, x, y FROM images ORDER BY test_guess ASC, random() LIMIT 5;"
     cursor.execute(query)
     conn.commit()
-    results = cursor.fetchone()
+    results = cursor.fetchall()
 
     AWS_MT = checkMT(request.args)
     render_data = {
         "dev": DEV_ENVIROMENT_BOOLEAN,
         "aws_MT": AWS_MT,
         "mapbox_key": MAPBOX_KEY,
-        "image": results[0],
-        "img_url": results[1],
-        "lng": results[2],
-        "lat": results[3]
+        "images": [int(result[0]) for result in results],
+        "img_urls": [result[1] for result in results],
+        "lngs": [result[2] for result in results],
+        "lats": [result[3] for result in results],
     }
-
     if AWS_MT:
         render_data.update({
             "amazon_host": AMAZON_HOST,
@@ -109,20 +108,62 @@ def guess():
         })
     else:
         render_data.update({
-            "amazon_host": "NA",
+            "amazon_host":"NA",
             "hitId": "NA",
             "assignmentId" : "NA",
             "workerId" : "NA"
         })
 
-    resp = make_response(render_template("guess.html", name = render_data))
+    print render_data
+    resp = make_response(render_template("guess.html", data = render_data))
+    resp.headers['x-frame-options'] = 'this_can_be_anything'
+    return resp
+
+# ROUTE FOR GUESSING
+@app.route('/label', methods=['GET', 'POST'])
+def label():
+
+    if needConsent(request.args):
+        return redirect(url_for('consent'))
+
+    # Get a random but least-seen image
+    query = "SELECT name, url FROM images ORDER BY label_guess ASC, random() LIMIT 20;"
+    cursor.execute(query)
+    conn.commit()
+    results = cursor.fetchall()
+
+    AWS_MT = checkMT(request.args)
+    render_data = {
+        "dev": DEV_ENVIROMENT_BOOLEAN,
+        "aws_MT": AWS_MT,
+        "mapbox_key": MAPBOX_KEY,
+        "images": [int(result[0]) for result in results],
+        "img_urls": [result[1] for result in results]
+    }
+    if AWS_MT:
+        render_data.update({
+            "amazon_host": AMAZON_HOST,
+            "hitId": request.args.get("hitId"),
+            "assignmentId" : request.args.get("assignmentId"),
+            "workerId" : request.args.get("workerId")
+        })
+    else:
+        render_data.update({
+            "amazon_host":"NA",
+            "hitId": "NA",
+            "assignmentId" : "NA",
+            "workerId" : "NA"
+        })
+
+    print render_data
+    resp = make_response(render_template("label.html", data = render_data))
     resp.headers['x-frame-options'] = 'this_can_be_anything'
     return resp
 
 # ROUTE FOR SUBMISSION
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
-
+    print request.form.keys()
     if request.form['task'] == 'guess':
         print request.form
         query = "INSERT INTO guess (hit_id, assignment_id, worker_id, time, image, guess_x, guess_y, find_time, dev, aws_mt) VALUES (%(hitId_)s, %(assignmentId_)s, %(workerId_)s, %(time_)s, %(image_)s, %(guessX_)s, %(guessY_)s, %(findTime_)s, %(dev_)s, %(aws_mt_)s);"

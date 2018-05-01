@@ -1,89 +1,44 @@
+<!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <title>Lynch-Kepes Image Labeling</title>
+  <title>MAKING A NEW IMAGE OF THE CITY</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
-  <script src="js/jquery-csv.js"></script>
-  <script src="js/papaparse.min.js"></script>
-  <link rel="stylesheet" href="css/style.css">
 </head>
 
-
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <span class="navbar-brand">Making a New City Image</span>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Consent</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Guess <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Label</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Recall</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Share</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
   <div class="container">
-    <div class="row" style="margin:10px 0px">
+    <div class="row" style="margin-top: 40px">
       <div class="col-md">
-        <h5 style="display:inline; margin-right:20px" >Lynch-Kepes Image Labeling</h5><span id="counter"></span>
-      </div>
-
-    </div>
-
-    <div class="row" style="margin:10px 0px">
-        <div class="col-md-3">
-  			     <div id="preview" ></div>
-  			</div>
-        <div class="col-md-8 offset-md-1">
-            <div id="street-view"></div>
-        </div>
-    </div>
-
-    <div class="row" style="margin:10px 0px">
-  			<div class="col-md">
-          <div id="map"></div>
-      </div>
-    </div>
-
-    <div class="row" id="data" style="margin:10px 0px">
-  		<div class="col-md">
-        <b>id </b><span id="id"></span><br>
-        <b>found? </b><input type=checkbox id="check" style="margin:0px 12px 0px 4px"></input>
-      </div>
-  		<div class="col-md">
-          <b>exclude? </b><input type=checkbox id="exclude" style="margin:0px 12px 0px 4px"></input><br>
-          <b>type </b><input type=text id="type"></input>
-      </div>
-  		<div class="col-md">
-          <b>lat lng </b><span id="latLng"></span><br>
-          <b>heading </b><span id="heading"></span>
-      </div>
-  		<div class="col-md">
-          <b>SV lat lng </b><span id="sv_latLng"></span><br>
-          <b>SV heading </b><span id="sv_heading"></span>
-          <!-- <b>SV pitch </b><span id="sv_pitch"></span> -->
-      </div>
-    </div>
-
-    <div class="row" id="data" style="margin:10px 0px">
-  		<div class="col-md-9">
-          <b>description </b><p id="text" style="height:10px; width:100%"></p>
-          <b>query string</b>
-          <input type="textarea" class="form-control" id="query_field"></input>
-  		</div>
-  		<div class="col-md">
-          <br><p id="spacer" style="height:10px; width:100%"></p>
-          <b>city</b>
-          <input type="textarea" class="form-control" id="constraint"></input>
-  		</div>
-  	</div>
-
-    <div class="row" id="controls" style="margin:20px 0px">
-      <div class="col-md">
-        <form class="form-inline">
-          <input type="field" class="form-control form-control-sm mr-sm-2"  id="id_field">
-          <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value="Find ID" onclick="findImage()">
-          <input type="button" class="btn btn-secondary btn-sm mr-sm-2" id="prev" value="<" onclick="prevImage()">
-          <input type="button" class="btn btn-secondary btn-sm mr-sm-5"  id="next" value=">" onclick="nextImage()">
-          <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="geocode" value="Geocode">
-          <input type="button"  class="btn btn-secondary btn-sm mr-sm-2" id="clear" value="Clear" onclick="deleteMarkers()">
-          <input type="button"  class="btn btn-secondary btn-sm mr-sm-5" id="save" value="Save" onclick="saveChanges()">
-          <input type="button" class="btn btn-primary btn-sm mr-sm-2" id="export" value="Export" onclick="exportCSV()">
-        </form>
+        <h1>Label</h1>
+        <p>Brian Ho - Harvard GSD MDE 2018</p>
       </div>
     </div>
   </div>
 </body>
-
-<script type="text/javascript" src="js/label.js"></script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDY8IKIOTRAbDnKx6LrnoQV0B5Cjm9AjA8&callback=initialize"></script>

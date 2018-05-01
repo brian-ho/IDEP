@@ -1,20 +1,38 @@
 #map {
-  height: 360px;
-  width: 100%;
-  border-radius: 50%;
+  height: 30vh;
+  /* width:  360px; */
+  /* border-radius: 10%; */
   z-index: 500;
   position: relative;
+  display: block;
+  margin: 0 auto;
 }
 
-#map-wrapper{
+#map-wrapper {
     position: relative;
-    width: 300px;
-    height: 300px;
+    height: 30vh;
+    /* height:  300px; */
     display: inline-block;
 }
+#score {
+  left: 50%;
+  top: 50%;
+  text-align: center;
+  vertical-align: middle;
+  position: absolute;
+  z-index: 1000;
+  transform: translate(-50%, 50%);
+  color: #fff;
+}
 
+#pano-wrapper {
+  height:50vh;
+  overflow:hidden;
+}
 
 #pano {
+  object-fit: cover;
+  width: 100%;
   position: relative;
   opacity: 0.2;
   filter: blur(10px);
