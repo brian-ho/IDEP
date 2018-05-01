@@ -1,0 +1,16 @@
+
+input[type=checkbox] + p {
+  color: #ccc;
+  font-style: italic;
+}
+
+input[type-checkbox]:checked + img {
+  opacity: 0.5;
+  border-style: solid;
+  border-color: "black";
+  border-width: 8px;
+}
+
+input[type-checkbox]:checked + label {
+  font-size: 10rem;
+}

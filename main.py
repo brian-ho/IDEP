@@ -7,6 +7,7 @@ import datetime
 import math
 import json
 import random
+import numpy as np
 from flask import Flask, render_template, url_for, request, make_response, redirect
 
 from boto.mturk.connection import MTurkConnection
@@ -114,7 +115,7 @@ def guess():
             "workerId" : "NA"
         })
 
-    print render_data
+    # print render_data
     resp = make_response(render_template("guess.html", data = render_data))
     resp.headers['x-frame-options'] = 'this_can_be_anything'
     return resp
@@ -127,10 +128,18 @@ def label():
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
-    query = "SELECT name, url FROM images ORDER BY label_guess ASC, random() LIMIT 20;"
+    query = "SELECT name, url FROM images ORDER BY test_label ASC, random() LIMIT 20;"
     cursor.execute(query)
     conn.commit()
-    results = cursor.fetchall()
+    results = np.asarray(cursor.fetchall())
+    mask = np.random.randint(0, results.shape[0], size=8)
+    results_recall = np.asarray(results)[mask].tolist()
+    # Get a random but least-seen image
+    query = "SELECT name, url FROM images ORDER BY test_label ASC, random() LIMIT 12;"
+    cursor.execute(query)
+    conn.commit()
+    results_extra = cursor.fetchall()
+    results_total = np.random.shuffle(np.asarray(results_recall + results_extra))
 
     AWS_MT = checkMT(request.args)
     render_data = {
@@ -138,7 +147,9 @@ def label():
         "aws_MT": AWS_MT,
         "mapbox_key": MAPBOX_KEY,
         "images": [int(result[0]) for result in results],
-        "img_urls": [result[1] for result in results]
+        "urls": [result[1] for result in results],
+        "images_recall": [int(result[0]) for result in results_extra],
+        "urls_recall": [result[1] for result in results_extra]
     }
     if AWS_MT:
         render_data.update({
@@ -155,7 +166,7 @@ def label():
             "workerId" : "NA"
         })
 
-    print render_data
+    # print render_data
     resp = make_response(render_template("label.html", data = render_data))
     resp.headers['x-frame-options'] = 'this_can_be_anything'
     return resp
@@ -188,6 +199,11 @@ def submit():
             print "---DISABLING HIT"
             connection.disable_hit(request.form['hitId'])
         '''
+        return redirect(url_for('intro'))
+
+    elif request.form['task'] == 'label':
+        print "LABEL"
+        
         return redirect(url_for('intro'))
 
 

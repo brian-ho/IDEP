@@ -1,8 +1,17 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>MAKING A NEW IMAGE OF THE CITY</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <meta data="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+  integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+  integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+  crossorigin=""></script>
+  <link rel="stylesheet" href="../css/label.css">
+  <title>New City Image: Label Task</title>
 </head>
 
 <body>
@@ -32,7 +41,6 @@
   </div>
 </nav>
 
-
   <div class="container">
     <div class="row" style="margin-top: 40px">
       <div class="col-md">
@@ -40,5 +48,128 @@
         <p>Brian Ho - Harvard GSD MDE 2018</p>
       </div>
     </div>
+        <form id = "HIT" class="row mt-3" method="POST">
+        {% for i in range(9) %}
+          {% if i % 3 == 0 %}
+            <div class="row">
+          {% endif %}
+            <div class="col-md-4">
+                <label>
+                  <!-- <p>{{ data.images[i] }}{}</p> -->
+                  <input type="checkbox" name="{{ i }}" id="{{ i }}"></input>
+                  <img class="img-fluid" src="{{ data.urls[i] }}">
+                </label>
+            </div>
+          {% if i % 3 == 2 %}
+          </div>
+          {% endif %}
+        {% endfor %}
+        <div class="row">
+          <div class="col-md mt-5">
+                <button type="button" class="btn btn-primary mr-2" id="guess" onclick="submitForm()">Next</button>
+                <!-- <button type="button" class="btn btn-secondary" id="submitBtn" onclick="submitForm()">Submit</button> -->
+          </div>
+          <input type="hidden" id="task"name="task" value="label" />
+          <input type="hidden" id="images" name="images" value="{{ data.images }}" />
+          <input type="hidden" id="dev" name="dev" value="{{ data.dev }}"/>
+          <input type="hidden" id="aws_mt" name="aws_mt" value="{{ data.aws_MT }}"/>
+          <input type="hidden" id="amazon_host" name="amazon_host" value="{{ data.amazon_host }}"/>
+          <input type="hidden" id="hitId" name="hitId" value="{{ data.hitId }}"/>
+          <input type="hidden" id="assignmentId" name="assignmentId" value="{{ data.assignmentId }}"/>
+          <input type="hidden" id="workerId" name="workerId" value="{{ data.workerId }}"/>
+        </div>
+      </form>
   </div>
 </body>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+var data = {{ data|tojson|safe }};
+var trial = 0;
+var line;
+var startTime;
+var map = L.map('map').setView([42.36, -71.06], 13);
+var marker1;
+var marker2;
+
+// function completeRead() {
+//   startTime = Date.now();
+//   document.getElementById("pano").style.filter = blur(0);
+//   document.getElementById("pano").setAttribute("style","-webkit-filter:blur(" + 0 + "px)")
+//   document.getElementById("pano").style.opacity = 1;
+//   document.getElementById("instructions").style.visibility = "hidden";
+//   map.on('click', clickMap);
+// }
+
+// function clickMap(e) {
+//     if ( marker1 ) { map.removeLayer(marker1) };
+//     marker1 = L.circleMarker([e.latlng.lat, e.latlng.lng]);
+//     marker1.addTo(map)
+//         .bindPopup('Your guess.')
+//         .openPopup();
+//     document.getElementById("guessX").value = e.latlng.lng;
+//     document.getElementById("guessY").value = e.latlng.lat;
+//     document.getElementById("guess").disabled = false;
+// }
+
+// function makeGuess() {
+//     var guess = L.latLng(document.getElementById("guessY").value, document.getElementById("guessX").value);
+//     var image_loc = L.latLng(data.lats[trial], data.lngs[trial]);
+//
+//   	var findTime = (Date.now() - startTime)/1000.0;
+//   	document.getElementById("findTime").value = findTime;
+//     document.getElementById("guess").disabled = true;
+//     document.getElementById("submitBtn").disabled = false;
+//
+//     marker2 = L.circleMarker(image_loc);
+//     marker2.addTo(map);
+//     line = L.polyline([guess,image_loc])
+//     line.addTo(map);
+//     map.options.zoomSnap = 0.1;
+//     map.fitBounds(line.getBounds(), {padding:[50,50]});
+//     map.off('click', clickMap);
+//     map.options.zoomSnap = 1;
+//
+//     var distance = image_loc.distanceTo(guess);
+//     document.getElementById("score").innerText = distance.toFixed(2)+" meters";
+// }
+
+function submitForm() {
+    var form = document.querySelector("#HIT");
+    // Submit back to AWS
+    var d = new FormData(form);
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "/submit");
+    xmlhttp.send(d);
+
+    form.action = (data.aws_mt) ? data.amazon_host : "/label";
+    (trial > 1) ? form.submit() : nextTrial();
+}
+
+function nextTrial() {
+  trial ++;
+  document.getElementById("pano").src = data.img_urls[trial];
+  document.getElementById("guess").disabled = false;
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("guess").disabled = true;
+  document.getElementById("score").innerText = "";
+  document.getElementById("pano").style.filter = blur(0);
+  document.getElementById("pano").setAttribute("style","-webkit-filter:blur(" + 10 + "px)")
+  document.getElementById("pano").style.opacity = 0.2;
+  document.getElementById("instructions").style.visibility = "visible";
+  map.removeLayer(line);
+  map.removeLayer(marker1);
+  map.removeLayer(marker2);
+  map.setView([42.36, -71.06], 13);
+
+  console.log(markers);
+}
+
+L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {id:'dark-v9',accessToken:data.mapbox_key}).addTo(map);
+
+</script>
+</html>
