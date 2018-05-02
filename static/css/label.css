@@ -1,16 +1,31 @@
-
-input[type=checkbox] + p {
-  color: #ccc;
-  font-style: italic;
+#instructions {
+  position: absolute;
+  text-align: center;
+  top: 45%;
+  width: 100%;
+  z-index: 1000;
+  background-color: "red";
+  background: "red";
 }
 
-input[type-checkbox]:checked + img {
-  opacity: 0.5;
-  border-style: solid;
-  border-color: "black";
-  border-width: 8px;
+#recall {
+  visibility: hidden;
 }
 
-input[type-checkbox]:checked + label {
-  font-size: 10rem;
+#grid {
+  height: 70vh;
+}
+
+.form-group {
+  z-index:1;
+}
+
+.thumb {
+  opacity: 0.2;
+  filter: blur(10px);
+  -webkit-filter: blur(10px);
+}
+
+.img-fluid.thumb:checked {
+  opacity:0.5;
 }

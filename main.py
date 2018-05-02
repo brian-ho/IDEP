@@ -128,7 +128,7 @@ def label():
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
-    query = "SELECT name, url FROM images ORDER BY test_label ASC, random() LIMIT 20;"
+    query = "SELECT name, url FROM images ORDER BY test_label ASC, random() LIMIT 36;"
     cursor.execute(query)
     conn.commit()
     results = np.asarray(cursor.fetchall())
@@ -171,12 +171,19 @@ def label():
     resp.headers['x-frame-options'] = 'this_can_be_anything'
     return resp
 
+# ROUTE FOR SHARING
+@app.route('/share', methods=['GET', 'POST'])
+def share():
+    render_data = ""
+
+    resp = make_response(render_template("share.html", data = render_data))
+    resp.headers['x-frame-options'] = 'this_can_be_anything'
+    return resp
+
 # ROUTE FOR SUBMISSION
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
-    print request.form.keys()
     if request.form['task'] == 'guess':
-        print request.form
         query = "INSERT INTO guess (hit_id, assignment_id, worker_id, time, image, guess_x, guess_y, find_time, dev, aws_mt) VALUES (%(hitId_)s, %(assignmentId_)s, %(workerId_)s, %(time_)s, %(image_)s, %(guessX_)s, %(guessY_)s, %(findTime_)s, %(dev_)s, %(aws_mt_)s);"
 
         cursor.execute(query, {
@@ -202,10 +209,24 @@ def submit():
         return redirect(url_for('intro'))
 
     elif request.form['task'] == 'label':
-        print "LABEL"
-        
-        return redirect(url_for('intro'))
+        print request.form['labels']
 
+        query = "INSERT INTO label (hit_id, assignment_id, worker_id, time, images, labels, dev, aws_mt) VALUES (%(hitId_)s, %(assignmentId_)s, %(workerId_)s, %(time_)s, %(images_)s, %(labels_)s, %(dev_)s, %(aws_mt_)s);"
+
+        cursor.execute(query, {
+            'hitId_': request.form['hitId'],
+            'assignmentId_': request.form['assignmentId'],
+            'workerId_': request.form['workerId'],
+            'time_': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z'),
+            'images_': request.form['images'],
+            'labels_': request.form['labels'],
+            # 'category_': request.form['category'],
+            'dev_': request.form['dev'],
+            'aws_mt_': request.form['aws_mt']
+            })
+        conn.commit()
+
+        return redirect(url_for('intro'))
 
 '''
 # ROUTE FOR FIND TASK

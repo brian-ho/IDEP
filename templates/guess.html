@@ -64,7 +64,7 @@
         </div>
         <div class="form-group col-md-8 text-center">
         <button type="button" class="btn btn-primary mr-2" id="guess" onclick="makeGuess()" disabled>Guess</button>
-        <button type="button" class="btn btn-secondary" id="submitBtn" onclick="submitForm()" disabled>Next</button>
+        <button type="button" class="btn btn-secondary" id="advance" onclick="advanceForm()" disabled>Next</button>
         </div>
         <div class="form-group col-md-2 text-right">
         <button type="button" class="btn btn-outline-danger" id="lost" onclick="skip()" disabled>I don't know</button>
@@ -126,7 +126,7 @@ function makeGuess() {
   	var findTime = (Date.now() - startTime)/1000.0;
   	document.getElementById("findTime").value = findTime;
     document.getElementById("guess").disabled = true;
-    document.getElementById("submitBtn").disabled = false;
+    document.getElementById("advance").disabled = false;
 
     marker2 = L.circleMarker(image_loc);
     marker2.addTo(map);
@@ -141,26 +141,26 @@ function makeGuess() {
     document.getElementById("score").innerText = distance.toFixed(2)+" meters";
 }
 
-function submitForm() {
+function advanceForm() {
     var form = document.querySelector("#HIT");
     // Submit back to AWS
     var d = new FormData(form);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("POST", "/submit");
     xmlhttp.send(d);
-
     form.action = (data.aws_mt) ? data.amazon_host : "/label";
-    (trial > 4) ? form.submit() : nextTrial();
+    (trial > 3) ? form.submit() : nextTrial();
 }
 
 function nextTrial() {
-  trial ++;
+  console.log("advance");
+  trial++;
   document.getElementById("pano").src = data.img_urls[trial];
   document.getElementById("guess").disabled = false;
-  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("advance").disabled = true;
   document.getElementById("guess").disabled = true;
   document.getElementById("score").innerText = "";
-  document.getElementById("pano").style.filter = blur(0);
+  document.getElementById("pano").style.filter = blur(10);
   document.getElementById("pano").setAttribute("style","-webkit-filter:blur(" + 10 + "px)")
   document.getElementById("pano").style.opacity = 0.2;
   document.getElementById("instructions").style.visibility = "visible";
@@ -168,8 +168,7 @@ function nextTrial() {
   map.removeLayer(marker1);
   map.removeLayer(marker2);
   map.setView([42.36, -71.06], 13);
-
-  console.log(markers);
+  console.log(trial, trial > 4);
 }
 
 L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {id:'dark-v9',accessToken:data.mapbox_key}).addTo(map);

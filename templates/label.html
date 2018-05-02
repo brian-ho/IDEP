@@ -41,45 +41,60 @@
   </div>
 </nav>
 
+<div id="instructions">
+      <p>Please look at these images of Boston and select all that match the category of neighborhood.</p>
+      <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="I'm ready!" onclick="completeRead()"/>
+</div>
+
+<div id="recall">
   <div class="container">
-    <div class="row" style="margin-top: 40px">
-      <div class="col-md">
-        <h1>Label</h1>
-        <p>Brian Ho - Harvard GSD MDE 2018</p>
-      </div>
+    <div class="row">
+      <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <p>Please look at these images of Boston and select all that match the category of neighborhood.</p>
+          <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="I'm ready!" onclick="completeRead()"/>
+        </div>
+      <div class="col-md-2"></div>
     </div>
-        <form id = "HIT" class="row mt-3" method="POST">
+  </div>
+</div>
+
+<div class="container" id=grid>
+    <form id = "HIT" class="row mt-3" method="POST">
         {% for i in range(9) %}
           {% if i % 3 == 0 %}
             <div class="row">
           {% endif %}
             <div class="col-md-4">
-                <label>
-                  <!-- <p>{{ data.images[i] }}{}</p> -->
-                  <input type="checkbox" name="{{ i }}" id="{{ i }}"></input>
-                  <img class="img-fluid" src="{{ data.urls[i] }}">
-                </label>
+                <!-- <p>{{ data.images[i] }}</p> -->
+                <input type="checkbox" class="checkbox thumb" name="{{ i }}" id="{{ i }}"></input>
+                  <label class="form-group" for="{{ i }}"><img class="img-fluid thumb" src="{{ data.urls[i] }}"></label>
             </div>
           {% if i % 3 == 2 %}
-          </div>
+            </div>
           {% endif %}
         {% endfor %}
-        <div class="row">
-          <div class="col-md mt-5">
-                <button type="button" class="btn btn-primary mr-2" id="guess" onclick="submitForm()">Next</button>
-                <!-- <button type="button" class="btn btn-secondary" id="submitBtn" onclick="submitForm()">Submit</button> -->
-          </div>
-          <input type="hidden" id="task"name="task" value="label" />
-          <input type="hidden" id="images" name="images" value="{{ data.images }}" />
-          <input type="hidden" id="dev" name="dev" value="{{ data.dev }}"/>
-          <input type="hidden" id="aws_mt" name="aws_mt" value="{{ data.aws_MT }}"/>
-          <input type="hidden" id="amazon_host" name="amazon_host" value="{{ data.amazon_host }}"/>
-          <input type="hidden" id="hitId" name="hitId" value="{{ data.hitId }}"/>
-          <input type="hidden" id="assignmentId" name="assignmentId" value="{{ data.assignmentId }}"/>
-          <input type="hidden" id="workerId" name="workerId" value="{{ data.workerId }}"/>
-        </div>
-      </form>
-  </div>
+        <input type="hidden" id="task"name="task" value="label" />
+        <input type="hidden" id="images" name="images" value="{{ data.images }}" />
+        <input type="hidden" id="labels" name="labels" />
+        <!-- <input type="hidden" id="category" name="category" value="disrict" /> -->
+        <input type="hidden" id="dev" name="dev" value="{{ data.dev }}"/>
+        <input type="hidden" id="aws_mt" name="aws_mt" value="{{ data.aws_MT }}"/>
+        <input type="hidden" id="amazon_host" name="amazon_host" value="{{ data.amazon_host }}"/>
+        <input type="hidden" id="hitId" name="hitId" value="{{ data.hitId }}"/>
+        <input type="hidden" id="assignmentId" name="assignmentId" value="{{ data.assignmentId }}"/>
+        <input type="hidden" id="workerId" name="workerId" value="{{ data.workerId }}"/>
+    </form>
+</div>
+<div class="container">
+    <div class="row">
+      <div class="col-md mt-5">
+          <button type="button" class="btn btn-primary mr-2" id="guess" onclick="submitForm()" disabled>Next</button>
+          <!-- <button type="button" class="btn btn-secondary" id="submitBtn" onclick="submitForm()">Submit</button> -->
+      </div>
+    </div>
+</div>
+
 </body>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -89,87 +104,66 @@
 <script type="text/javascript">
 
 var data = {{ data|tojson|safe }};
+var labels = [];
 var trial = 0;
-var line;
-var startTime;
-var map = L.map('map').setView([42.36, -71.06], 13);
-var marker1;
-var marker2;
 
-// function completeRead() {
-//   startTime = Date.now();
-//   document.getElementById("pano").style.filter = blur(0);
-//   document.getElementById("pano").setAttribute("style","-webkit-filter:blur(" + 0 + "px)")
-//   document.getElementById("pano").style.opacity = 1;
-//   document.getElementById("instructions").style.visibility = "hidden";
-//   map.on('click', clickMap);
-// }
+function completeRead() {
+  var thumbs = document.getElementsByClassName("thumb");
+  var i;
 
-// function clickMap(e) {
-//     if ( marker1 ) { map.removeLayer(marker1) };
-//     marker1 = L.circleMarker([e.latlng.lat, e.latlng.lng]);
-//     marker1.addTo(map)
-//         .bindPopup('Your guess.')
-//         .openPopup();
-//     document.getElementById("guessX").value = e.latlng.lng;
-//     document.getElementById("guessY").value = e.latlng.lat;
-//     document.getElementById("guess").disabled = false;
-// }
+  for (i = 0; i < thumbs.length; i++) {
+      thumbs[i].style.filter = blur(0);
+      thumbs[i].setAttribute("style","-webkit-filter:blur(" + 0 + "px)");
+      thumbs[i].style.opacity = 1;
+    }
 
-// function makeGuess() {
-//     var guess = L.latLng(document.getElementById("guessY").value, document.getElementById("guessX").value);
-//     var image_loc = L.latLng(data.lats[trial], data.lngs[trial]);
-//
-//   	var findTime = (Date.now() - startTime)/1000.0;
-//   	document.getElementById("findTime").value = findTime;
-//     document.getElementById("guess").disabled = true;
-//     document.getElementById("submitBtn").disabled = false;
-//
-//     marker2 = L.circleMarker(image_loc);
-//     marker2.addTo(map);
-//     line = L.polyline([guess,image_loc])
-//     line.addTo(map);
-//     map.options.zoomSnap = 0.1;
-//     map.fitBounds(line.getBounds(), {padding:[50,50]});
-//     map.off('click', clickMap);
-//     map.options.zoomSnap = 1;
-//
-//     var distance = image_loc.distanceTo(guess);
-//     document.getElementById("score").innerText = distance.toFixed(2)+" meters";
-// }
+  document.getElementById("instructions").style.visibility = "hidden";
+  document.getElementById("guess").disabled = false;
+}
 
 function submitForm() {
-    var form = document.querySelector("#HIT");
-    // Submit back to AWS
-    var d = new FormData(form);
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "/submit");
-    xmlhttp.send(d);
-
-    form.action = (data.aws_mt) ? data.amazon_host : "/label";
-    (trial > 1) ? form.submit() : nextTrial();
+  switch(true) {
+    case trial <= 2:
+        var checks = document.getElementsByClassName("checkbox thumb");
+        for (i = 0; i < checks.length; i++) {
+          labels.push( checks[i].checked ? trial : 0 );
+          checks[i].checked = false;
+        }
+        nextTrial();
+    case trial == 2:
+        document.getElementById("labels").value = labels;
+        nextRecall();
+    case trial > 2:
+        nextRecall();
+    case trial > 22:
+        var form = document.querySelector("#HIT");
+        var d = new FormData(form);
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", "/submit");
+        xmlhttp.send(d);
+        form.action = (data.aws_mt) ? data.amazon_host : "/share";
+        form.submit();
+    }
 }
 
 function nextTrial() {
   trial ++;
-  document.getElementById("pano").src = data.img_urls[trial];
-  document.getElementById("guess").disabled = false;
-  document.getElementById("submitBtn").disabled = true;
+
+  var thumbs = document.getElementsByClassName("thumb");
+  var imgs = document.getElementsByClassName("img-fluid");
+  var i;
+
+  for (i = 0; i < thumbs.length; i++) {
+      thumbs[i].style.filter = blur(10);
+      thumbs[i].setAttribute("style","-webkit-filter:blur(" + 10 + "px)");
+      thumbs[i].style.opacity = 0.2;
+    }
+  for (i = 0; i < imgs.length; i++) {
+      thumbs[i].src = data.urls[i + (trial*12)];
+    }
+
   document.getElementById("guess").disabled = true;
-  document.getElementById("score").innerText = "";
-  document.getElementById("pano").style.filter = blur(0);
-  document.getElementById("pano").setAttribute("style","-webkit-filter:blur(" + 10 + "px)")
-  document.getElementById("pano").style.opacity = 0.2;
   document.getElementById("instructions").style.visibility = "visible";
-  map.removeLayer(line);
-  map.removeLayer(marker1);
-  map.removeLayer(marker2);
-  map.setView([42.36, -71.06], 13);
-
-  console.log(markers);
 }
-
-L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {id:'dark-v9',accessToken:data.mapbox_key}).addTo(map);
-
 </script>
 </html>
