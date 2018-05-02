@@ -63,12 +63,14 @@
     <form id = "HIT" class="row mt-3" method="POST">
         {% for i in range(9) %}
           {% if i % 3 == 0 %}
-            <div class="row">
+            <div class="row mt-1">
           {% endif %}
             <div class="col-md-4">
-                <!-- <p>{{ data.images[i] }}</p> -->
-                <input type="checkbox" class="checkbox thumb" name="{{ i }}" id="{{ i }}"></input>
-                  <label class="form-group" for="{{ i }}"><img class="img-fluid thumb" src="{{ data.urls[i] }}"></label>
+                  <!-- <p>{{ data.images[i] }}{}</p> -->
+                  <input type="checkbox" class="checkbox thumb" name="{{ i }}" id="{{ i }}"></input>
+                  <label for="{{ i }}">
+                    <img class="img-fluid thumb" src="{{ data.urls[i] }}">
+                  </label>
             </div>
           {% if i % 3 == 2 %}
             </div>
@@ -108,13 +110,12 @@ var labels = [];
 var trial = 0;
 
 function completeRead() {
-  var thumbs = document.getElementsByClassName("thumb");
+  var thumbs = document.getElementsByClassName("img-fluid thumb");
   var i;
-
+  // console.log(thumbs);
   for (i = 0; i < thumbs.length; i++) {
-      thumbs[i].style.filter = blur(0);
-      thumbs[i].setAttribute("style","-webkit-filter:blur(" + 0 + "px)");
-      thumbs[i].style.opacity = 1;
+    console.log(thumbs[i]);
+      thumbs[i].setAttribute("style","-webkit-filter:blur(" + 0 + "px); pointer-events:all; opacity:1.0; filter:blur(0)");
     }
 
   document.getElementById("instructions").style.visibility = "hidden";
@@ -124,10 +125,12 @@ function completeRead() {
 function submitForm() {
   switch(true) {
     case trial <= 2:
-        var checks = document.getElementsByClassName("checkbox thumb");
+        var checks = document.getElementsByClassName("checkbox");
+        var thumbs = document.getElementsByClassName("thumb");
         for (i = 0; i < checks.length; i++) {
           labels.push( checks[i].checked ? trial : 0 );
           checks[i].checked = false;
+          thumbs[i].checked = false;
         }
         nextTrial();
     case trial == 2:
@@ -149,16 +152,13 @@ function submitForm() {
 function nextTrial() {
   trial ++;
 
-  var thumbs = document.getElementsByClassName("thumb");
-  var imgs = document.getElementsByClassName("img-fluid");
+  // var checks = document.getElementsByClassName("checkbox");
+  var thumbs = document.getElementsByClassName("img-fluid thumb");
   var i;
 
+  // for (i = 0; i < checks.length; i++) {  }
   for (i = 0; i < thumbs.length; i++) {
-      thumbs[i].style.filter = blur(10);
-      thumbs[i].setAttribute("style","-webkit-filter:blur(" + 10 + "px)");
-      thumbs[i].style.opacity = 0.2;
-    }
-  for (i = 0; i < imgs.length; i++) {
+      thumbs[i].setAttribute("style","-webkit-filter:blur(" + 10 + "px); filter:blur(10px);opacity:0.2;pointer-events:none");
       thumbs[i].src = data.urls[i + (trial*12)];
     }
 

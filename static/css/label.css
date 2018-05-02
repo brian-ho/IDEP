@@ -20,12 +20,23 @@
   z-index:1;
 }
 
-.thumb {
+.img-fluid.thumb {
+  pointer-events: none;
   opacity: 0.2;
   filter: blur(10px);
   -webkit-filter: blur(10px);
 }
 
-.img-fluid.thumb:checked {
-  opacity:0.5;
+input[type=checkbox] {
+  display: none;
+}
+
+input[type=checkbox] + label {
+  pointer-events: none;
+}
+
+input[type=checkbox]:checked + label {
+  outline-style: solid;
+  outline-color: #0069D9;
+  outline-width: 3px;
 }
