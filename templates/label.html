@@ -29,6 +29,9 @@
         <a class="nav-link" href="#">Guess <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
+        <a class="nav-link disabled" href="#">Score</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link disabled" href="#">Label</a>
       </li>
       <li class="nav-item">
@@ -41,23 +44,40 @@
   </div>
 </nav>
 
-<div id="instructions">
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md">
+      <p>Page <span id="counter">1</span> of 4</p>
+    </div>
+  </div>
+</div>
+
+<div id="instructions1">
       <p>Please look at these images of Boston and select all that match the category of neighborhood.</p>
       <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="I'm ready!" onclick="completeRead()"/>
 </div>
 
-<div id="recall">
-  <div class="container">
+<div id="instructions2">
+      <p>Please look at these images of Boston and select all that match the category of neighborhood.</p>
+      <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="I'm ready!" onclick="completeRead()"/>
+</div>
+
+<!-- <div id="recall">
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-md"><img id="recall_img" src=" {{ data.urls_recall }}"></div>
+    </div>
     <div class="row">
       <div class="col-md-2"></div>
         <div class="col-md-8">
           <p>Please look at these images of Boston and select all that match the category of neighborhood.</p>
-          <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="I'm ready!" onclick="completeRead()"/>
+          <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="Seen" onclick="completeRead()"/>
+          <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="Not Seen" onclick="completeRead()"/>
         </div>
       <div class="col-md-2"></div>
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="container" id=grid>
     <form id = "HIT" class="row mt-3" method="POST">
@@ -107,24 +127,28 @@
 
 var data = {{ data|tojson|safe }};
 var labels = [];
-var trial = 0;
+var trial = 1;
 
 function completeRead() {
-  var thumbs = document.getElementsByClassName("img-fluid thumb");
-  var i;
-  // console.log(thumbs);
-  for (i = 0; i < thumbs.length; i++) {
-    console.log(thumbs[i]);
-      thumbs[i].setAttribute("style","-webkit-filter:blur(" + 0 + "px); pointer-events:all; opacity:1.0; filter:blur(0)");
-    }
-
-  document.getElementById("instructions").style.visibility = "hidden";
-  document.getElementById("guess").disabled = false;
+  if (trial <= 5) {
+    var thumbs = document.getElementsByClassName("img-fluid thumb");
+    var i;
+    // console.log(thumbs);
+    for (i = 0; i < thumbs.length; i++) {
+        thumbs[i].setAttribute("style","-webkit-filter:blur(" + 0 + "px); pointer-events:all; opacity:1.0; filter:blur(0)");
+      }
+    console.log(trial);
+    document.getElementById("instructions1").style.visibility = "hidden";
+    document.getElementById("guess").disabled = false;
+  }
+  else {
+    document.getElementById("instructions2").style.visibility = "hidden";
+    document.getElementById("recall").style.visibility = "visible";
+  }
 }
 
 function submitForm() {
-  switch(true) {
-    case trial <= 2:
+    if (trial < 4){
         var checks = document.getElementsByClassName("checkbox");
         var thumbs = document.getElementsByClassName("thumb");
         for (i = 0; i < checks.length; i++) {
@@ -132,13 +156,23 @@ function submitForm() {
           checks[i].checked = false;
           thumbs[i].checked = false;
         }
+        console.log(labels);
         nextTrial();
-    case trial == 2:
+    }
+    else if (trial == 4) {
+        var checks = document.getElementsByClassName("checkbox");
+        for (i = 0; i < checks.length; i++) {
+          labels.push( checks[i].checked ? trial : 0 );
+        }
+        console.log(labels);
         document.getElementById("labels").value = labels;
-        nextRecall();
-    case trial > 2:
-        nextRecall();
-    case trial > 22:
+//        document.getElementById("grid").style.visibility = "hidden";
+//        nextRecall();
+//      }
+//      else if (trial > 4) {
+//        nextRecall();
+//    }
+//    else if (trial > 23) {
         var form = document.querySelector("#HIT");
         var d = new FormData(form);
         var xmlhttp = new XMLHttpRequest();
@@ -150,8 +184,8 @@ function submitForm() {
 }
 
 function nextTrial() {
-  trial ++;
-
+  trial++;
+  document.getElementById("counter").textContent = trial;
   // var checks = document.getElementsByClassName("checkbox");
   var thumbs = document.getElementsByClassName("img-fluid thumb");
   var i;
@@ -159,11 +193,18 @@ function nextTrial() {
   // for (i = 0; i < checks.length; i++) {  }
   for (i = 0; i < thumbs.length; i++) {
       thumbs[i].setAttribute("style","-webkit-filter:blur(" + 10 + "px); filter:blur(10px);opacity:0.2;pointer-events:none");
-      thumbs[i].src = data.urls[i + (trial*12)];
+      thumbs[i].src = data.urls[i + (trial-1)*9];
     }
-
   document.getElementById("guess").disabled = true;
-  document.getElementById("instructions").style.visibility = "visible";
+  document.getElementById("instructions1").style.visibility = "visible";
 }
+
+function nextRecall() {
+  trial ++;
+  document.getElementById("counter").textContent = trial;
+  console.log("instructions2");
+  document.getElementById("instructions2").style.visibility = "visible";
+
+};
 </script>
 </html>

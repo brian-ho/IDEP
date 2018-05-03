@@ -85,7 +85,7 @@ def guess():
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
-    query = "SELECT name, url, x, y FROM images ORDER BY test_guess ASC, random() LIMIT 5;"
+    query = "SELECT name, url_360, x, y FROM images ORDER BY test_guess ASC, random() LIMIT 5;"
     cursor.execute(query)
     conn.commit()
     results = cursor.fetchall()
@@ -133,13 +133,14 @@ def label():
     conn.commit()
     results = np.asarray(cursor.fetchall())
     mask = np.random.randint(0, results.shape[0], size=8)
-    results_recall = np.asarray(results)[mask].tolist()
+    results_recall = np.asarray(results)[mask]
     # Get a random but least-seen image
     query = "SELECT name, url FROM images ORDER BY test_label ASC, random() LIMIT 12;"
     cursor.execute(query)
     conn.commit()
-    results_extra = cursor.fetchall()
-    results_total = np.random.shuffle(np.asarray(results_recall + results_extra))
+    results_extra = np.asarray(cursor.fetchall()).tolist()
+    results_total = np.concatenate((results_recall, results_extra))
+    np.random.shuffle(results_total)
 
     AWS_MT = checkMT(request.args)
     render_data = {
@@ -148,9 +149,10 @@ def label():
         "mapbox_key": MAPBOX_KEY,
         "images": [int(result[0]) for result in results],
         "urls": [result[1] for result in results],
-        "images_recall": [int(result[0]) for result in results_extra],
-        "urls_recall": [result[1] for result in results_extra]
+        "images_recall": [int(result[0]) for result in results_total],
+        "urls_recall": [result[1] for result in results_total]
     }
+
     if AWS_MT:
         render_data.update({
             "amazon_host": AMAZON_HOST,
@@ -183,7 +185,12 @@ def share():
 # ROUTE FOR SUBMISSION
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
+
+    for arg in request.form.keys():
+        print arg, request.form[arg]
+
     if request.form['task'] == 'guess':
+
         query = "INSERT INTO guess (hit_id, assignment_id, worker_id, time, image, guess_x, guess_y, find_time, dev, aws_mt) VALUES (%(hitId_)s, %(assignmentId_)s, %(workerId_)s, %(time_)s, %(image_)s, %(guessX_)s, %(guessY_)s, %(findTime_)s, %(dev_)s, %(aws_mt_)s);"
 
         cursor.execute(query, {
@@ -209,7 +216,7 @@ def submit():
         return redirect(url_for('intro'))
 
     elif request.form['task'] == 'label':
-        print request.form['labels']
+        # print request.form['labels']
 
         query = "INSERT INTO label (hit_id, assignment_id, worker_id, time, images, labels, dev, aws_mt) VALUES (%(hitId_)s, %(assignmentId_)s, %(workerId_)s, %(time_)s, %(images_)s, %(labels_)s, %(dev_)s, %(aws_mt_)s);"
 
@@ -227,6 +234,51 @@ def submit():
         conn.commit()
 
         return redirect(url_for('intro'))
+
+# ROUTE FOR SUBMISSION
+@app.route('/score', methods=['GET', 'POST'])
+def score():
+    query = "INSERT INTO score (time, avg_dist, total_time) VALUES (%(time_)s, %(avg_dist_)s, %(total_time_)s) RETURNING id;"
+
+    cursor.execute(query, {
+        'time_': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z'),
+        'avg_dist_': request.form['avg_dist'],
+        'total_time_': request.form['total_time']
+        })
+    conn.commit()
+    id = cursor.fetchone()[0]
+
+    query = "SELECT id, avg_dist FROM score ORDER BY avg_dist ASC;"
+    cursor.execute(query)
+    conn.commit()
+    results = cursor.fetchall()
+    print results
+
+    rank_score = [result[0] for result in results].index(id)
+    high_score = results[0][1]
+
+    query = "SELECT id, total_time FROM score ORDER BY total_time ASC;"
+    cursor.execute(query)
+    conn.commit()
+    results = cursor.fetchall()
+    rank_time = [result[0] for result in results].index(id)
+    high_time = results[0][1]
+
+    print rank_score, rank_time
+    print high_score, high_time
+
+    render_data = {
+        "your_score": "%0.2f" % (float(request.form["avg_dist"])),
+        "your_time":  "%0.2f" % (float(request.form["total_time"])),
+        "your_rank_score" : rank_score,
+        "your_rank_time" : rank_time,
+        "high_score": "%0.2f" % (high_score),
+        "high_time": "%0.2f" % (high_time)
+    }
+
+    resp = make_response(render_template("score.html", data = render_data))
+    resp.headers['x-frame-options'] = 'this_can_be_anything'
+    return resp
 
 '''
 # ROUTE FOR FIND TASK

@@ -1,19 +1,30 @@
-#instructions {
+#instructions1 {
   position: absolute;
   text-align: center;
   top: 45%;
   width: 100%;
   z-index: 1000;
-  background-color: "red";
-  background: "red";
 }
 
-#recall {
+#instructions2 {
+  position: absolute;
+  text-align: center;
+  top: 45%;
+  width: 100%;
   visibility: hidden;
 }
+/*
+#recall {
+  position: absolute;
+  visibility: hidden;
+  text-align: center;
+  top: 45%;
+  width: 100%;
+  z-index: 1000;
+} */
 
 #grid {
-  height: 70vh;
+  height: 50vh;
 }
 
 .form-group {

@@ -35,17 +35,27 @@
         <a class="nav-link" href="#">Guess <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="#">Label</a>
+        <a class="nav-link disabled" href="#">Score</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="#">Recall</a>
+        <a class="nav-link disabled" href="#">Label</a>
       </li>
+      <!-- <li class="nav-item">
+        <a class="nav-link disabled" href="#">Recall</a>
+      </li> -->
       <li class="nav-item">
         <a class="nav-link disabled" href="#">Share</a>
       </li>
     </ul>
   </div>
 </nav>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md">
+      <p>Page <span id="counter">1</span> of 4</p>
+    </div>
+  </div>
+</div>
 
 <div class="container-fluid mt-3">
   <div class="row">
@@ -87,8 +97,9 @@
         <input type="hidden" id="hitId" name="hitId" value="{{ data.hitId }}"/>
         <input type="hidden" id="assignmentId" name="assignmentId" value="{{ data.assignmentId }}"/>
         <input type="hidden" id="workerId" name="workerId" value="{{ data.workerId }}"/>
-        </div>
-      </form>
+        <input type="hidden" id="avg_dist" name="avg_dist"/>
+        <input type="hidden" id="total_time" name="total_time"/>
+        </form>
     </div>
 </body>
 
@@ -97,27 +108,27 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
 <script type="text/javascript">
-
-
 var data = {{ data|tojson|safe }};
-var trial = 0;
+var trial = 1;
 var line;
 var startTime;
 var map = L.map('map').setView([42.36, -71.06], 13);
 var marker1;
 var marker2;
+var distances = [];
+var times = [];
 
 var viewer = PhotoSphereViewer({
   container: 'pano',
-  panorama: 'https://s3.amazonaws.com/new-city-image/360s/R0010736_xmp2.jpg',
+  panorama: data.img_urls[0],
   navbar: []
 });
-
-function positionChanged() {
-  console.log('MOVE');
-}
+viewer.stopAutorotate();
 
 // viewer.on('position-updated', positionChanged());
+// function positionChanged() {
+//   console.log('MOVE');
+// }
 
 function completeRead() {
   startTime = Date.now();
@@ -141,7 +152,7 @@ function clickMap(e) {
 
 function makeGuess() {
     var guess = L.latLng(document.getElementById("guessY").value, document.getElementById("guessX").value);
-    var image_loc = L.latLng(data.lats[trial], data.lngs[trial]);
+    var image_loc = L.latLng(data.lats[trial-1], data.lngs[trial-1]);
 
   	var findTime = (Date.now() - startTime)/1000.0;
   	document.getElementById("findTime").value = findTime;
@@ -158,24 +169,53 @@ function makeGuess() {
     map.options.zoomSnap = 1;
 
     var distance = image_loc.distanceTo(guess);
+    distances.push(distance);
+    times.push(findTime);
     document.getElementById("score").innerText = distance.toFixed(2)+" meters";
 }
 
 function advanceForm() {
+    var total_dist = 0;
+    var avg_dist = 0;
+    for (var i = 0; i < distances.length; i++) { total_dist += distances[i]; }
+    var avg_dist = total_dist / distances.length;
+
+    var total_time = 0;
+    var avg_time = 0;
+    for (var i = 0; i < times.length; i++) { total_time += times[i]; }
+    var avg_time = total_time / times.length;
+
+    document.getElementById("avg_dist").value = avg_dist;
+    document.getElementById("total_time").value = total_time;
+
     var form = document.querySelector("#HIT");
     // Submit back to AWS
     var d = new FormData(form);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("POST", "/submit");
     xmlhttp.send(d);
-    form.action = (data.aws_mt) ? data.amazon_host : "/label";
-    (trial > 3) ? form.submit() : nextTrial();
+    // console.log(trial > 4);
+    if (trial <= 4) { nextTrial(); }
+    else {
+      if ( data.aws_MT ){
+        form.action = data.amazon_host;
+        form.submit();
+      }
+      else {
+        form.action = "/score";
+        form.submit();
+      }
+    }
 }
 
 function nextTrial() {
-  console.log("advance");
+  document.getElementById("counter").textContent = trial;
   trial++;
-  document.getElementById("pano").src = data.img_urls[trial];
+  // document.getElementById("pano").src = data.img_urls[trial-1];
+  viewer.setPanorama(data.img_urls[trial-1]);
+  viewer.stopAutorotate();
+  console.log(data.img_urls[trial-1]);
+
   document.getElementById("guess").disabled = false;
   document.getElementById("advance").disabled = true;
   document.getElementById("guess").disabled = true;
@@ -188,7 +228,6 @@ function nextTrial() {
   map.removeLayer(marker1);
   map.removeLayer(marker2);
   map.setView([42.36, -71.06], 13);
-  console.log(trial, trial > 4);
 }
 
 L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {id:'dark-v9',accessToken:data.mapbox_key}).addTo(map);
