@@ -25,14 +25,14 @@
       <li class="nav-item">
         <a class="nav-link disabled" href="#">Consent</a>
       </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Guess <span class="sr-only">(current)</span></a>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Guess</a>
       </li>
       <li class="nav-item">
         <a class="nav-link disabled" href="#">Score</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Label</a>
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Label<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
         <a class="nav-link disabled" href="#">Recall</a>
@@ -44,10 +44,14 @@
   </div>
 </nav>
 
-<div class="container mt-5">
+<div class="container mt-3">
   <div class="row">
-    <div class="col-md">
-      <p>Page <span id="counter">1</span> of 4</p>
+    <div class="col-md-11">
+      <p>Page <span id="counter">1</span> of 4 — Please select all that match the description.</p>
+    </div>
+    <div class="col-md-1">
+        <button type="button float-right" class="btn btn-primary mr-2" id="guess" onclick="submitForm()" disabled>Next</button>
+        <!-- <button type="button" class="btn btn-secondary" id="submitBtn" onclick="submitForm()">Submit</button> -->
     </div>
   </div>
 </div>
@@ -107,14 +111,6 @@
         <input type="hidden" id="assignmentId" name="assignmentId" value="{{ data.assignmentId }}"/>
         <input type="hidden" id="workerId" name="workerId" value="{{ data.workerId }}"/>
     </form>
-</div>
-<div class="container">
-    <div class="row">
-      <div class="col-md mt-5">
-          <button type="button" class="btn btn-primary mr-2" id="guess" onclick="submitForm()" disabled>Next</button>
-          <!-- <button type="button" class="btn btn-secondary" id="submitBtn" onclick="submitForm()">Submit</button> -->
-      </div>
-    </div>
 </div>
 
 </body>

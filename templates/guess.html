@@ -32,7 +32,7 @@
         <a class="nav-link disabled" href="#">Consent</a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="#">Guess <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="#">Guess<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
         <a class="nav-link disabled" href="#">Score</a>
@@ -49,15 +49,15 @@
     </ul>
   </div>
 </nav>
-<div class="container mt-5">
+<div class="container mt-3">
   <div class="row">
     <div class="col-md">
-      <p>Page <span id="counter">1</span> of 4</p>
+        <p>Page <span id="counter">1</span> of 5 — Please locate this image by clicking on the map below.</p>
     </div>
   </div>
 </div>
 
-<div class="container-fluid mt-3">
+<div class="container-fluid">
   <div class="row">
     <div class="col-md">
       <div id="pano-wrapper">
@@ -72,7 +72,7 @@
   </div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
     <div class="col-md mt-3" id="map-wrapper"><p id="score"></p><div class="img" id="map"></div></div>
   </div>
@@ -84,7 +84,7 @@
         <button type="button" class="btn btn-secondary" id="advance" onclick="advanceForm()" disabled>Next</button>
         </div>
         <div class="form-group col-md-2 text-right">
-        <button type="button" class="btn btn-outline-danger" id="lost" onclick="skip()" disabled>I don't know</button>
+        <!-- <button type="button" class="btn btn-outline-danger" id="lost" onclick="skip()" disabled>I don't know</button> -->
         </div>
         <input type="hidden" id="task"name="task" value="guess" />
         <input type="hidden" id="image" name="image" value="{{ data.images[0] }}" />
@@ -209,13 +209,14 @@ function advanceForm() {
 }
 
 function nextTrial() {
-  document.getElementById("counter").textContent = trial;
   trial++;
+  document.getElementById("counter").textContent = trial;
+  // console.log(trial-1);
   // document.getElementById("pano").src = data.img_urls[trial-1];
   viewer.setPanorama(data.img_urls[trial-1]);
   viewer.stopAutorotate();
-  console.log(data.img_urls[trial-1]);
 
+  document.getElementById("image").value = data.images[trial-1];
   document.getElementById("guess").disabled = false;
   document.getElementById("advance").disabled = true;
   document.getElementById("guess").disabled = true;
