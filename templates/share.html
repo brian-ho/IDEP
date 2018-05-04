@@ -110,6 +110,17 @@ function clickMap(e) {
 }
 
 function shareMemory(){
+  if (document.getElementById("memory").value == '' || document.getElementById("memory").value == null) {
+    document.getElementById("memory").value = 'NA';}
+  if (document.getElementById("username").value == '' || document.getElementById("username").value == null) {
+    document.getElementById("username").value = 'NA';}
+  if (document.getElementById("email").value == '' || document.getElementById("email").value == null) {
+    document.getElementById("email").value = 'NA';}
+  if (document.getElementById("memX").value == '' || document.getElementById("memX").value == null) {
+    document.getElementById("memX").value = '9999';}
+  if (document.getElementById("memY").value == '' || document.getElementById("memY").value == null) {
+    document.getElementById("memY").value = '9999';}
+
       var form = document.querySelector("#memoryForm");
       console.log(form);
       var d = new FormData(form);
