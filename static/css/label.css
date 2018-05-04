@@ -1,17 +1,28 @@
-#instructions1 {
+
+#instructions1{
   position: absolute;
   text-align: center;
-  top: 45%;
+  top: 15%;
   width: 100%;
   z-index: 1000;
 }
 
-#instructions2 {
+#instructions2{
+  visibility: hidden;
   position: absolute;
   text-align: center;
-  top: 45%;
+  top: 15%;
   width: 100%;
+  z-index: 1000;
+}
+
+#instructions3{
   visibility: hidden;
+  position: absolute;
+  text-align: center;
+  top: 15%;
+  width: 100%;
+  z-index: 1000;
 }
 /*
 #recall {
@@ -47,6 +58,6 @@ input[type=checkbox] + label {
 
 input[type=checkbox]:checked + label {
   outline-style: solid;
-  outline-color: #0069D9;
-  outline-width: 3px;
+  outline-color: "black";
+  outline-width: 4px;
 }

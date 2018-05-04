@@ -55,7 +55,7 @@
 <div class="container mt-3">
   <div class="row">
     <div class="col-md">
-        <p>Page <span id="counter">1</span> of 5 — Please locate this image within the city of Boston by clicking on the map below. You can use your mouse to move around the image and map.</p>
+        <p>Page <span id="counter">1</span> of 5 — Please locate this image within the city of Boston by <b>clicking on the map below</b>. You can use your mouse to move around the image and map.</p>
     </div>
   </div>
 </div>
@@ -67,8 +67,8 @@
         <div id="pano"></div>
         <!-- <img class="img" id="pano" src="{{ data.img_urls[0] }}"> -->
       <div id="instructions">
-            <p>Please look at this image of Boston and try to guess where it is by clicking on the map below.</p>
-            <input type="button" id="completReadBtn" class="btn btn-outline-primary" value="I'm ready!" onclick="completeRead()"/>
+            <h5>Please look at this image of Boston and try to guess where it is by clicking on the map below.</h5>
+            <input type="button" id="completReadBtn" class="btn btn-outline-primary btn-lg mt-3" value="I'm ready!" onclick="completeRead()"/>
       </div>
       </div>
     </div>
@@ -124,7 +124,7 @@ var times = [];
 var viewer = PhotoSphereViewer({
   container: 'pano',
   panorama: data.img_urls[0],
-  navbar: []
+  navbar: ['autorotate', 'zoom']
 });
 viewer.stopAutorotate();
 

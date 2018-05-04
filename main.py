@@ -144,7 +144,7 @@ def label():
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
-    query = "SELECT name, url FROM images ORDER BY test_label ASC, random() LIMIT 36;"
+    query = "SELECT name, url FROM images ORDER BY test_label ASC, random() LIMIT 54;"
     cursor.execute(query)
     conn.commit()
     results = np.asarray(cursor.fetchall())
