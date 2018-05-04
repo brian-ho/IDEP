@@ -275,14 +275,14 @@ def score():
     results = cursor.fetchall()
     print results
 
-    rank_score = [result[0] for result in results].index(id)
+    rank_score = [result[0] for result in results].index(id) + 1
     high_score = results[0][1]
 
     query = "SELECT id, total_time FROM score ORDER BY total_time ASC;"
     cursor.execute(query)
     conn.commit()
     results = cursor.fetchall()
-    rank_time = [result[0] for result in results].index(id)
+    rank_time = [result[0] for result in results].index(id) + 1
     high_time = results[0][1]
 
     print rank_score, rank_time
