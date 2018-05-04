@@ -58,7 +58,9 @@ connection = MTurkConnection(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_acc
 # ROUTES FOR INTERNAL NAVIGATION
 @app.route('/')
 def main():
-    return render_template('nav.html')
+    AWS_MT = checkMT(request.args)
+    if not AWS_MT:
+        return render_template('consent.html')
 
 @app.route('/map')
 def map():
@@ -66,7 +68,7 @@ def map():
 
 @app.route('/consent')
 def consent():
-    return render_template('consent.html')
+    return render_template('consentAWS.html')
 
 
 @app.route('/intro')

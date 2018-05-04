@@ -230,8 +230,7 @@ function nextTrial() {
   map.removeLayer(marker2);
   map.setView([42.36, -71.06], 13);
 }
-
-L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {id:'dark-v9',accessToken:data.mapbox_key}).addTo(map);
+L.tileLayer('https://api.mapbox.com/styles/v1/brianho/cjgs28sqk00112rlb2j6wmpz9/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {id:'dark-v9',accessToken:data.mapbox_key}).addTo(map);
 
 </script>
 </html>
