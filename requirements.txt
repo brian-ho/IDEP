@@ -19,3 +19,5 @@ psycopg2 == 2.7.3.2
 # notebooks/osc/osc.py: 38
 # notebooks/osc/theta.py: 49
 requests == 2.14.2
+
+gunicorn==19.4.5
