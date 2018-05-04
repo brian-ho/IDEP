@@ -17,7 +17,7 @@
   <script src="../js/lib/doT.min.js"></script>
   <script src="../js/lib/photo-sphere-viewer.min.js"></script>
   <link rel="stylesheet" href="../css/guess.css">
-  <title>New City Image: Your Score</title>
+  <title>New City Image: Thank You!</title>
 </head>
 
 <body>
@@ -32,47 +32,38 @@
         <a class="nav-link disabled" href="#">Consent</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="#">Guess</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Score<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="/guess">Guess</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="#">Label</a>
+        <a class="nav-link disabled" href="#">Score</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/label">Label</a>
       </li>
       <!-- <li class="nav-item">
         <a class="nav-link disabled" href="#">Recall</a>
       </li> -->
       <li class="nav-item">
-        <a class="nav-link disabled" href="#">Share</a>
+        <a class="nav-link" href="/share">Share</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link disabled" href="#">Thanks!</a>
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Thanks!<span class="sr-only">(current)</span></a>
       </li>
     </ul>
   </div>
 </nav>
 
 <div class="jumbotron">
-  <h1 class="display-4">Your score is <b>{{ data['your_score'] }} meters</b></h1>
-  <h1 class="display-4">Your time is <b>{{ data['your_time'] }} seconds</b></h1>
+  <h1 class="display-4">Thank you for your help!</b></h1>
   <br>
-  <p class="lead">You rank number {{ data['your_rank_score'] }} by distance and number {{ data['your_rank_time'] }} by time. The best score is {{ data['high_score'] }} meters and the best time is {{ data['high_time'] }} seconds.</p>
+  <p class="lead">I appreciate your time and effort, and your contributions to making a new city image.</p>
   <hr class="my-4">
-  <p>Thanks for playing! You can choose to continue the survey, or play the guessing game again.</p>
+  <p>Feel free to take any elements of this survey again! Have questions? Reach out at <a href="mailto:bho@mde.harvard.edu">ho@mde.harvard.edu</a>.</p>
   <br>
-  <p class="lead">
-    <a class="btn btn-secondary btn-lg" href="/guess" role="button">Play Again</a>
-    <a class="btn btn-primary btn-lg" href="/label" role="button">Continue</a>
-  </p>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </body>
-<script type="text/javascript">
-  var data = {{ data|tojson|safe }};
-  console.log(data.your_score);
-</script>
 </html>

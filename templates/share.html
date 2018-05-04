@@ -1,26 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>MAKING A NEW IMAGE OF THE CITY</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <meta data="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+  integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+  integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+  crossorigin=""></script>
+  <link rel="stylesheet" href="../css/share.css">
+  <title>New City Image: Share Your Memory</title>
 </head>
 
 <body>
-  <div class="container">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <span class="navbar-brand">Making a New City Image</span>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Consent</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Guess</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Score</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Label</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#"><span class="sr-only">(current)</span>Share</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#">Thanks!</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-md">
+        <p><b>This section is optional:</b> if you'd like, please submit your own memories of Boston, located on this map.  Additionally, if you'd like to be entered into a raffle to win a $20 Amazon gift certifcate and a copy of Kevin Lynch's <i>Image of the City</i>, please share your email.</p>
+    </div>
+  </div>
+</div>
 
-    <div class="row" style="margin-top: 40px">
-      <div class="col-md">
-        <h1>Share</h1>
-        <p>Brian Ho - Harvard GSD MDE 2018</p>
+<div class="container-fluid">
+  <div class="row"><div class="col-md mt-3" id="map-wrapper"><div class="img" id="map"></div></div></div>
+  <form id ="memoryForm" method="POST">
+    <div class="row mt-3">
+      <div class="col-md form-group">
+        <label for="memory">Your memory:</label>
+        <textarea class="form-control" rows="2" name="memory" id="memory">This is voluntary. Please share whatever memories you strongly associate with a place in the city of Boston.</textarea>
       </div>
     </div>
-
     <div class="row">
-      <div class="col-md">
-        <a href="/label.html">go label some</a><br>
-        <a href="/map.html">go look at some</a>
-      </div>
+      <div class="col-md 2"></div>
+        <div class="col-md 4 form-group">
+          <label for="username">Your name:</label>
+          <input type="text" class="form-control" id="username" name="username" value="Entirely optional!">
+        </div>
+        <div class="col-md 4 form-group">
+          <label for="email">Your email:</label>
+          <input type="text" class="form-control" id="email" name="email" value="Entirely optional (for raffle only)!">
+        </div>
+        <div class="col-md 2"></div>
     </div>
-
+    <div class="row mt-1">
+      <div class="col-md-2"></div>
+        <div class="form-group col-md-8 text-center">
+        <button type="button" class="btn btn-primary mr-2" id="share" onclick="shareMemory()" disabled>Share</button>
+        <a class="btn btn-secondary" href="/finish" role="button">Skip and Finish</a>
+        </div>
+    <div class="form-group col-md-2 text-right"></div>
+    <input type="hidden" id="task" name="task" value="share"/>
+    <input type="hidden" id="memX" name="memX"/>
+    <input type="hidden" id="memY" name="memY"/>
+  </div>
+  </form>
   </div>
 </body>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+var data = {{ data|tojson|safe }};
+var map = L.map('map').setView([42.36, -71.06], 13);
+var marker;
+
+map.on('click', clickMap);
+
+function clickMap(e) {
+  if ( marker ) { map.removeLayer(marker) };
+  marker = L.circleMarker([e.latlng.lat, e.latlng.lng]);
+  marker.addTo(map)
+      .bindPopup('Your memory is here!')
+      .openPopup();
+  document.getElementById("memX").value = e.latlng.lng;
+  document.getElementById("memY").value = e.latlng.lat;
+  document.getElementById("share").disabled = false;
+}
+
+function shareMemory(){
+      var form = document.querySelector("#memoryForm");
+      console.log(form);
+      var d = new FormData(form);
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("POST", "/submit");
+      xmlhttp.send(d);
+      form.action = "/finish";
+      form.submit();
+}
+
+L.tileLayer('https://api.mapbox.com/styles/v1/brianho/cjgs28sqk00112rlb2j6wmpz9/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {id:'dark-v9',accessToken:data.mapbox_key}).addTo(map);
+
+</script>
+</html>

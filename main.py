@@ -24,7 +24,7 @@ MAPBOX_KEY = os.environ['MAPBOX_API_KEY']
 # GMAPS_URL = "https://maps.googleapis.com/maps/api/js?key="+GMAPS_KEY+"&callback=initialize"
 
 AWS_MT = False
-DEV_ENVIROMENT_BOOLEAN = True
+DEV_ENVIROMENT_BOOLEAN = False
 TASK_LIMIT = 5
 
 # This allows us to specify whether we are pushing to the sandbox or live site.
@@ -62,22 +62,36 @@ def main():
     if not AWS_MT:
         return render_template('consent.html')
 
-@app.route('/map')
-def map():
-    return render_template('map.html')
+# @app.route('/map')
+# def map():
+#     return render_template('map.html')
 
 @app.route('/consent')
 def consent():
     return render_template('consentAWS.html')
 
+@app.route('/share', methods=['GET', 'POST'])
+def share():
+
+    render_data = {
+        "dev": DEV_ENVIROMENT_BOOLEAN,
+        "mapbox_key": MAPBOX_KEY
+        }
+    resp = make_response(render_template("share.html", data = render_data))
+    resp.headers['x-frame-options'] = 'this_can_be_anything'
+    return resp
+
+@app.route('/finish', methods=['GET', 'POST'])
+def finish():
+    return render_template('finish.html')
 
 @app.route('/intro')
 def intro():
     return render_template('intro.html')
 
-@app.route('/sorry')
-def sorry():
-    return render_template('sorry.html')
+# @app.route('/sorry')
+# def sorry():
+#     return render_template('sorry.html')
 
 # ROUTE FOR GUESSING
 @app.route('/guess', methods=['GET', 'POST'])
@@ -175,15 +189,6 @@ def label():
     resp.headers['x-frame-options'] = 'this_can_be_anything'
     return resp
 
-# ROUTE FOR SHARING
-@app.route('/share', methods=['GET', 'POST'])
-def share():
-    render_data = ""
-
-    resp = make_response(render_template("share.html", data = render_data))
-    resp.headers['x-frame-options'] = 'this_can_be_anything'
-    return resp
-
 # ROUTE FOR SUBMISSION
 @app.route('/submit', methods=['GET', 'POST'])
 def submit():
@@ -235,6 +240,20 @@ def submit():
             })
         conn.commit()
 
+        return redirect(url_for('intro'))
+
+    elif request.form['task'] == 'share':
+        query = "INSERT INTO memory (time, memx, memy, memory, name, email) VALUES (%(time_)s, %(memX_)s, %(memY_)s, %(memory_)s, %(name_)s, %(email_)s);"
+
+        cursor.execute(query, {
+            'memX_': request.form['memX'],
+            'memY_': request.form['memY'],
+            'memory_': request.form['memory'],
+            'time_': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z'),
+            'name_': request.form['username'],
+            'email_': request.form['email']
+            })
+        conn.commit()
         return redirect(url_for('intro'))
 
 # ROUTE FOR SUBMISSION
