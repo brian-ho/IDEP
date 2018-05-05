@@ -204,7 +204,7 @@ function advanceForm() {
     if (trial <= 4) { nextTrial(); }
     else {
       if (data.hitId != 'NA')){
-        form.action = "{{ name.amazon_host }}";
+        form.action = "{{ data.amazon_host }}";
         form.submit();
       }
       else {

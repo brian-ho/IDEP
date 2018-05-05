@@ -136,6 +136,9 @@ var data = {{ data|tojson|safe }};
 var labels = [];
 var trial = 1;
 
+console.log(data.aws_mt);
+console.log(data.hitId != 'NA');
+
 function completeRead() {
     var thumbs = document.getElementsByClassName("img-fluid thumb");
     var i;
@@ -189,7 +192,7 @@ function submitForm() {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", "/submit");
         xmlhttp.send(d);
-        form.action = (data.hitId != 'NA') ? "{{ name.amazon_host }}" : "/share";
+        form.action = (data.hitId != 'NA') ? "{{ data.amazon_host }}" : "/share";
         form.submit();
     }
 }
