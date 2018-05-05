@@ -41,7 +41,7 @@ qualifications = Qualifications()
 # qualifications.add(NumberHitsApprovedRequirement(comparator="GreaterThan", integer_value="100"))
 
 #This url will be the url of your application, with appropriate GET parameters
-url = "https://cs279-final-project.herokuapp.com/%s?trial=%s" % (task, trial)
+url = "https://new-city-image.herokuapp.com/%s" % (task)
 questionform = ExternalQuestion(url, frame_height)
 create_hit_result = connection.create_hit(
     title="Help identify street images of Boston!",
