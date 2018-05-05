@@ -54,7 +54,8 @@
 </nav>
 
 <form id = "HIT" method="POST">
-<div class="container mt-5" id="check">
+<div id="check">
+  <div class="container mt-5" >
   <div class="row">
       <div class="col-md">
         <h5>This survey is intended to test how Boston is seen by people who have been to the city</b>.</h5>
@@ -79,8 +80,8 @@
     </div></div>
     <div class="row">
       <div class="col-md">
-      <button type="button" class="btn btn-primary" id="confirm" onclick="confirm">I'd like to take the survey</button>
-    </div></div>
+      <button type="button" class="btn btn-primary" id="confirm" onclick="checkConfirm()">I'd like to take the survey</button>
+    </div></div></div>
 </div>
 
 
@@ -154,13 +155,13 @@ var marker2;
 var distances = [];
 var times = [];
 
-if ( data.aws_mt != 'True' ){
-  document.getElementById("check").style.visibility = "hidden";
-  document.getElementById('overlay').style.visibility = "visible";
-  document.getElementById('topDescription').style.visibility = "visible";
-}
+// if ( data.aws_mt != 'True' ){
+//   document.getElementById("check").style.visibility = "hidden";
+//   document.getElementById('overlay').style.visibility = "visible";
+//   document.getElementById('topDescription').style.visibility = "visible";
+// }
 
-function confirm() {
+function checkConfirm() {
    document.getElementById("check").style.visibility = "hidden";
    document.getElementById('overlay').style.visibility = "visible";
    document.getElementById('topDescription').style.visibility = "visible";

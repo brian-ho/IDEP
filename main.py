@@ -24,7 +24,7 @@ MAPBOX_KEY = os.environ['MAPBOX_API_KEY']
 # GMAPS_URL = "https://maps.googleapis.com/maps/api/js?key="+GMAPS_KEY+"&callback=initialize"
 
 AWS_MT = False
-DEV_ENVIROMENT_BOOLEAN = False
+DEV_ENVIROMENT_BOOLEAN = True
 TASK_LIMIT = 5
 
 # This allows us to specify whether we are pushing to the sandbox or live site.
@@ -212,7 +212,17 @@ def submit():
 
     if request.form['task'] == 'guess':
 
-        query = "INSERT INTO guess (hit_id, assignment_id, worker_id, time, image, guess_x, guess_y, find_time, dev, aws_mt) VALUES (%(hitId_)s, %(assignmentId_)s, %(workerId_)s, %(time_)s, %(image_)s, %(guessX_)s, %(guessY_)s, %(findTime_)s, %(dev_)s, %(aws_mt_)s);"
+        if 'check1' in request.form.keys():
+            check1 = True
+        else:
+            check1 = False
+
+        if 'check2' in request.form.keys():
+            check2 = True
+        else:
+            check2 = False
+
+        query = "INSERT INTO guess (hit_id, assignment_id, worker_id, time, image, guess_x, guess_y, find_time, dev, aws_mt, check1, check2) VALUES (%(hitId_)s, %(assignmentId_)s, %(workerId_)s, %(time_)s, %(image_)s, %(guessX_)s, %(guessY_)s, %(findTime_)s, %(dev_)s, %(aws_mt_)s, %(check1_)s, %(check2_)s);"
 
         cursor.execute(query, {
             'hitId_': request.form['hitId'],
@@ -225,6 +235,8 @@ def submit():
             'findTime_': request.form['findTime'],
             'dev_': request.form['dev'],
             'aws_mt_': request.form['aws_mt'],
+            'check1_': check1,
+            'check2_': check2,
             })
         conn.commit()
 

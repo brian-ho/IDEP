@@ -57,9 +57,9 @@
 }
 
 #check {
-    visibility: hidden;
+    /* visibility: hidden; */
     position: absolute;
     /* text-align: center; */
-    /* top: 5%; */
+    width: 100%;
     z-index: 1000;
 }
