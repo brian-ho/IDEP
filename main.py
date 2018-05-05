@@ -73,7 +73,7 @@ def consent():
 @app.route('/share', methods=['GET', 'POST'])
 def share():
 
-    if args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
+    if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         return redirect(url_for('consent'))
 
     render_data = {
@@ -100,7 +100,7 @@ def intro():
 @app.route('/guess', methods=['GET', 'POST'])
 def guess():
 
-    if args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
+    if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
@@ -143,7 +143,7 @@ def guess():
 @app.route('/label', methods=['GET', 'POST'])
 def label():
 
-    if args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
+    if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
