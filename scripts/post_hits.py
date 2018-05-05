@@ -38,7 +38,7 @@ else:
     title = 'Help make a city image for Boston! You can take multiple times. IDEP'
     amount = 0.01
 
-totalHITS = 100
+totalHITS = 50
 urls = []
 hitIDs = []
 #frame_height in pixels

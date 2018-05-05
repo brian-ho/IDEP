@@ -24,7 +24,7 @@ MAPBOX_KEY = os.environ['MAPBOX_API_KEY']
 # GMAPS_URL = "https://maps.googleapis.com/maps/api/js?key="+GMAPS_KEY+"&callback=initialize"
 
 AWS_MT = False
-DEV_ENVIROMENT_BOOLEAN = False
+DEV_ENVIROMENT_BOOLEAN = True
 TASK_LIMIT = 5
 
 # This allows us to specify whether we are pushing to the sandbox or live site.
@@ -240,6 +240,15 @@ def submit():
             })
         conn.commit()
 
+        query = "UPDATE images SET test_guess=test_guess+1 WHERE name=%(name_)s;"
+
+        cursor.execute(query, {
+            'name_': request.form['image']
+            })
+
+        conn.commit()
+
+
         '''
         count = get_trial_count('find', request.form['trial'], request.form['gen'])
         if count >= TASK_LIMIT:
@@ -265,6 +274,15 @@ def submit():
             'aws_mt_': request.form['aws_mt']
             })
         conn.commit()
+
+        image_ids = request.form['images'][1:-1].split(", ")
+        for seen_image in image_ids:
+            # print seen_image
+            query = "UPDATE images SET test_label=test_label+1 WHERE name=%(name_)s";
+            cursor.execute(query, {
+                'name_': seen_image
+                })
+            conn.commit()
 
         return redirect(url_for('intro'))
 
