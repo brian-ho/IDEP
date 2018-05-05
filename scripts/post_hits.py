@@ -48,9 +48,9 @@ create_hit_result = connection.create_hit(
     description="Participate in a short survey about perception of images of cities!",
     keywords=["city", "perception", "quick"],
     #duration is in seconds
-    duration = 60*10,
+    duration = 60*5,
     #max_assignments will set the amount of independent copies of the task (turkers can only see one)
-    max_assignments=10,
+    max_assignments=100,
     question=questionform,
     reward=Price(amount=amount),
      #Determines information returned by method in API, not super important

@@ -119,7 +119,7 @@ def guess():
     AWS_MT = checkMT(request.args)
     render_data = {
         "dev": DEV_ENVIROMENT_BOOLEAN,
-        "aws_MT": AWS_MT,
+
         "mapbox_key": MAPBOX_KEY,
         "images": [int(result[0]) for result in results],
         "img_urls": [result[1] for result in results],
@@ -175,7 +175,7 @@ def label():
     AWS_MT = checkMT(request.args)
     render_data = {
         "dev": DEV_ENVIROMENT_BOOLEAN,
-        "aws_MT": AWS_MT,
+        "aws_mt": AWS_MT,
         "mapbox_key": MAPBOX_KEY,
         "images": [int(result[0]) for result in results],
         "urls": [result[1] for result in results],
