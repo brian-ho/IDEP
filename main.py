@@ -74,7 +74,9 @@ def consent():
 def share():
 
     if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
-        return redirect(url_for('consent'))
+        resp = make_response(render_template("consentAWS.html", data = render_data))
+        resp.headers['x-frame-options'] = 'this_can_be_anything'
+        return resp
 
     render_data = {
         "dev": DEV_ENVIROMENT_BOOLEAN,
@@ -102,7 +104,9 @@ def guess():
 
     if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         print "Showing AWS consent"
-        return redirect(url_for('consent'))
+        resp = make_response(render_template("consentAWS.html", data = render_data))
+        resp.headers['x-frame-options'] = 'this_can_be_anything'
+        return resp
 
     print "Starting guess task"
 
@@ -147,7 +151,9 @@ def guess():
 def label():
 
     if request.args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
-        return redirect(url_for('consent'))
+        resp = make_response(render_template("consentAWS.html", data = render_data))
+        resp.headers['x-frame-options'] = 'this_can_be_anything'
+        return resp
 
     print "Starting label task"
 
