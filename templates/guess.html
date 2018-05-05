@@ -121,6 +121,9 @@ var marker2;
 var distances = [];
 var times = [];
 
+console.log(data.aws_mt);
+console.log(data.hitId != 'NA');
+
 var viewer = PhotoSphereViewer({
   container: 'pano',
   panorama: data.img_urls[0],
@@ -201,7 +204,7 @@ function advanceForm() {
     if (trial <= 4) { nextTrial(); }
     else {
       if (data.hitId != 'NA')){
-        form.action = data.amazon_host;
+        form.action = "{{ name.amazon_host }}";
         form.submit();
       }
       else {
