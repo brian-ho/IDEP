@@ -24,7 +24,7 @@ MAPBOX_KEY = os.environ['MAPBOX_API_KEY']
 # GMAPS_URL = "https://maps.googleapis.com/maps/api/js?key="+GMAPS_KEY+"&callback=initialize"
 
 AWS_MT = False
-DEV_ENVIROMENT_BOOLEAN = False
+DEV_ENVIROMENT_BOOLEAN = True
 TASK_LIMIT = 5
 
 # This allows us to specify whether we are pushing to the sandbox or live site.
@@ -40,7 +40,7 @@ print "Connecting to database ...\n	-> %s" % (conn_string)
 conn = psycopg2.connect(conn_string)
 '''
 urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
+url = urlparse.urlparse(os.environ["HEROKU_POSTGRESQL_ORANGE_URL"])
 conn = psycopg2.connect(
     database=url.path[1:],
     user=url.username,
