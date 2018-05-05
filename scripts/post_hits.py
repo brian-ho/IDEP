@@ -25,7 +25,7 @@ connection = MTurkConnection(aws_access_key_id=AWS_ACCESS_KEY_ID,
 
 #5 cents per HIT
 if task == 'guess':
-    amount = 0.05
+    amount = 0.02
 elif task == 'label':
     amount = 0.05
 elif task == 'share':
@@ -44,8 +44,8 @@ qualifications = Qualifications()
 url = "https://new-city-image.herokuapp.com/%s" % (task)
 questionform = ExternalQuestion(url, frame_height)
 create_hit_result = connection.create_hit(
-    title="Help identify street images of Boston!",
-    description="Participate in a short survey about perception of images of cities!"
+    title="Help identify street images of Boston (IDEP)!",
+    description="Participate in a short survey about perception of images of cities!",
     keywords=["city", "perception", "quick"],
     #duration is in seconds
     duration = 60*10,

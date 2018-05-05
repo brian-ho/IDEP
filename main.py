@@ -73,6 +73,9 @@ def consent():
 @app.route('/share', methods=['GET', 'POST'])
 def share():
 
+    if args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
+        return redirect(url_for('consent'))
+
     render_data = {
         "dev": DEV_ENVIROMENT_BOOLEAN,
         "mapbox_key": MAPBOX_KEY
@@ -97,7 +100,7 @@ def intro():
 @app.route('/guess', methods=['GET', 'POST'])
 def guess():
 
-    if needConsent(request.args):
+    if args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
@@ -140,7 +143,7 @@ def guess():
 @app.route('/label', methods=['GET', 'POST'])
 def label():
 
-    if needConsent(request.args):
+    if args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
         return redirect(url_for('consent'))
 
     # Get a random but least-seen image
@@ -730,13 +733,6 @@ def zoom_to_FOV(zoom):
 
 def checkMT(args):
     if  "assignmentId" in args:
-        return True
-    else:
-        return False
-
-def needConsent(args):
-    if args.get("assignmentId") == "ASSIGNMENT_ID_NOT_AVAILABLE":
-        print "CONSENT"
         return True
     else:
         return False
