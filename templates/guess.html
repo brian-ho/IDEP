@@ -200,7 +200,7 @@ function advanceForm() {
     // console.log(trial > 4);
     if (trial <= 4) { nextTrial(); }
     else {
-      if ( data.aws_mt == 'True')){
+      if (data.hitId != 'NA')){
         form.action = data.amazon_host;
         form.submit();
       }
