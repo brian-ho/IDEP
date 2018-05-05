@@ -25,7 +25,7 @@ connection = MTurkConnection(aws_access_key_id=AWS_ACCESS_KEY_ID,
 
 #5 cents per HIT
 if task == 'guess':
-    amount = 0.02
+    amount = 0.05
 elif task == 'label':
     amount = 0.05
 elif task == 'share':
