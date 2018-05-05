@@ -189,7 +189,7 @@ function submitForm() {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("POST", "/submit");
         xmlhttp.send(d);
-        form.action = (data.aws_mt) ? data.amazon_host : "/share";
+        form.action = (data.aws_mt == 'True') ? data.amazon_host : "/share";
         form.submit();
     }
 }
