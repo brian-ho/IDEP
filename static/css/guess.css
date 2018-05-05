@@ -47,3 +47,19 @@
   top: 45%;
   width: 100%;
 }
+
+#overlay {
+  visibility: hidden;
+}
+
+#topDescription{
+  visibility: hidden;
+}
+
+#check {
+    visibility: hidden;
+    position: absolute;
+    /* text-align: center; */
+    /* top: 5%; */
+    z-index: 1000;
+}

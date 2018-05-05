@@ -52,7 +52,40 @@
     </ul>
   </div>
 </nav>
-<div class="container mt-3">
+
+<form id = "HIT" method="POST">
+<div class="container mt-5" id="check">
+  <div class="row">
+      <div class="col-md">
+        <h5>This survey is intended to test how Boston is seen by people who have been to the city</b>.</h5>
+        <p>To that end, we want to know if you have been or lived in Boston. Please answer honestly, and thank you for your help.</p>
+      </div>
+  </div>
+  <div class="row ml-3">
+      <div class="col-md">
+        <input type="checkbox" class="form-check-input" id="check1" name="check1"/>
+        <label class="form-check-label" for="check1">Please check if you have visited and / or lived in the city of Boston.</label>
+      </div>
+  </div>
+  <div class="row ml-3">
+      <div class="col-md">
+        <input type="checkbox" class="form-check-input" id="check2" name="check2"/>
+        <label class="form-check-label" for="check2">Please check if you feel confident in your ability to recognize places in the city of Boston.</label>
+    </div>
+      </div>
+    <div class="row mt-5">
+      <div class="col-md">
+      <label class="form-btn-label" for="confirm">If you'd like to continue, please click below. Otherwise, you can exit this page.</label>
+    </div></div>
+    <div class="row">
+      <div class="col-md">
+      <button type="button" class="btn btn-primary" id="confirm" onclick="confirm">I'd like to take the survey</button>
+    </div></div>
+</div>
+
+
+
+<div class="container mt-3" id='topDescription'>
   <div class="row">
     <div class="col-md">
         <p>Page <span id="counter">1</span> of 5 — Please locate this image within the city of Boston by <b>clicking on the map below</b>. You can use your mouse to move around the image and map.</p>
@@ -60,12 +93,11 @@
   </div>
 </div>
 
-<div class="container-fluid">
+<div class="container-fluid" id="overlay">
   <div class="row">
     <div class="col-md">
       <div id="pano-wrapper">
         <div id="pano"></div>
-        <!-- <img class="img" id="pano" src="{{ data.img_urls[0] }}"> -->
       <div id="instructions">
             <h5>Please look at this image of Boston and try to guess where it is by clicking on the map below.</h5>
             <input type="button" id="completReadBtn" class="btn btn-outline-primary btn-lg mt-3" value="I'm ready!" onclick="completeRead()"/>
@@ -79,7 +111,7 @@
   <div class="row">
     <div class="col-md mt-3" id="map-wrapper"><p id="score"></p><div class="img" id="map"></div></div>
   </div>
-      <form id = "HIT" class="row mt-3" method="POST">
+  <div class="row mt-3">
         <div class="col-md-2">
         </div>
         <div class="form-group col-md-8 text-center">
@@ -102,8 +134,9 @@
         <input type="hidden" id="workerId" name="workerId" value="{{ data.workerId }}"/>
         <input type="hidden" id="avg_dist" name="avg_dist"/>
         <input type="hidden" id="total_time" name="total_time"/>
-        </form>
-    </div>
+  </div>
+</div>
+  </form>
 </body>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -121,8 +154,18 @@ var marker2;
 var distances = [];
 var times = [];
 
-console.log(data.aws_mt);
-console.log(data.hitId != 'NA');
+if ( data.aws_mt != 'True' ){
+  document.getElementById("check").style.visibility = "hidden";
+  document.getElementById('overlay').style.visibility = "visible";
+  document.getElementById('topDescription').style.visibility = "visible";
+}
+
+function confirm() {
+   document.getElementById("check").style.visibility = "hidden";
+   document.getElementById('overlay').style.visibility = "visible";
+   document.getElementById('topDescription').style.visibility = "visible";
+}
+
 
 var viewer = PhotoSphereViewer({
   container: 'pano',
@@ -203,7 +246,7 @@ function advanceForm() {
     // console.log(trial > 4);
     if (trial <= 4) { nextTrial(); }
     else {
-      if (data.hitId != 'NA')){
+      if (data.hitId != 'NA'){
         form.action = "{{ data.amazon_host }}";
         form.submit();
       }
