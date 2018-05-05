@@ -24,7 +24,7 @@ MAPBOX_KEY = os.environ['MAPBOX_API_KEY']
 # GMAPS_URL = "https://maps.googleapis.com/maps/api/js?key="+GMAPS_KEY+"&callback=initialize"
 
 AWS_MT = False
-DEV_ENVIROMENT_BOOLEAN = True
+DEV_ENVIROMENT_BOOLEAN = False
 TASK_LIMIT = 5
 
 # This allows us to specify whether we are pushing to the sandbox or live site.
