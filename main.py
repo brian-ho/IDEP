@@ -23,7 +23,7 @@ MAPBOX_KEY = os.environ['MAPBOX_API_KEY']
 # GMAPS_KEY = os.environ['GMAPS_KEY
 # GMAPS_URL = "https://maps.googleapis.com/maps/api/js?key="+GMAPS_KEY+"&callback=initialize"
 
-AWS_MT = True
+AWS_MT = False
 DEV_ENVIROMENT_BOOLEAN = False
 TASK_LIMIT = 5
 
